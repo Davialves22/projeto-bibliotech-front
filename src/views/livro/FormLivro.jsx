@@ -22,11 +22,14 @@ export default function FormLivro() {
   const [pdf, setPdf] = useState();
 
   const listaGeneros = [
-    { key: "ficcao", text: "Ficção", value: "Ficção" },
-    { key: "romance", text: "Romance", value: "Romance" },
-    { key: "fantasia", text: "Fantasia", value: "Fantasia" },
-    { key: "terror", text: "Terror", value: "Terror" },
-    { key: "biografia", text: "Biografia", value: "Biografia" },
+    { key: "FICCAO", text: "Ficção", value: "FICCAO" },
+    { key: "ROMANCE", text: "Romance", value: "ROMANCE" },
+    { key: "DRAMA", text: "Drama", value: "DRAMA" },
+    { key: "COMEDIA", text: "Comédia", value: "COMEDIA" },
+    { key: "FANTASIA", text: "Fantasia", value: "FANTASIA" },
+    { key: "TERROR", text: "Terror", value: "TERROR" },
+    { key: "DOCUMENTARIO", text: "Documentário", value: "DOCUMENTARIO" },
+    { key: "BIOGRAFIA", text: "Biografia", value: "BIOGRAFIA" },
   ];
 
   useEffect(() => {
