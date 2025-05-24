@@ -21,6 +21,14 @@ export default function FormLivro() {
   const [imagem_url, setImagem_url] = useState();
   const [pdf, setPdf] = useState();
 
+  const listaGeneros = [
+    { key: "ficcao", text: "Ficção", value: "Ficção" },
+    { key: "romance", text: "Romance", value: "Romance" },
+    { key: "fantasia", text: "Fantasia", value: "Fantasia" },
+    { key: "terror", text: "Terror", value: "Terror" },
+    { key: "biografia", text: "Biografia", value: "Biografia" },
+  ];
+
   useEffect(() => {
     console.log("state recebido:", state);
     if (state != null && state.id != null) {
@@ -152,7 +160,16 @@ export default function FormLivro() {
                 </Form.Input>
               </Form.Group>
 
-              <Form.Group>
+              <Form.Select
+                fluid
+                label="Gênero"
+                options={listaGeneros}
+                placeholder="Selecione o gênero"
+                value={genero}
+                onChange={(e, { value }) => setGenero(value)}
+              />
+
+              <Form.Group widths="equal">
                 <Form.Field width={3}>
                   <label>Preço</label>
                   <InputMask
@@ -181,7 +198,7 @@ export default function FormLivro() {
                 />
               </Form.Group>
 
-              <Form.Group>
+              <Form.Group widths="equal">
                 <Form.Input
                   fluid
                   label="Imagem URL"
