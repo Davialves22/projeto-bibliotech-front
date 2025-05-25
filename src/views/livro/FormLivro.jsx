@@ -245,7 +245,10 @@ export default function FormLivro() {
                 <input
                   type="file"
                   accept="application/pdf"
-                  onChange={(e) => setPdf(e.target.files[0])}
+                  onChange={(e) => {
+                    setPdf(e.target.files[0]);
+                    console.log("PDF selecionado:", e.target.files[0]);
+                  }}
                 />
               </Form.Field>
             </Form.Group>
