@@ -132,7 +132,7 @@ export default function ListLivro() {
                       </Table.Cell>
 
                       <Table.Cell>{livro.titulo}</Table.Cell>
-                      <Table.Cell>{livro.autor}</Table.Cell>
+                      <Table.Cell>{livro.nomeAutor}</Table.Cell>
                       <Table.Cell>{livro.genero}</Table.Cell>
                       <Table.Cell>{livro.isbn}</Table.Cell>
                       <Table.Cell textAlign="center">
