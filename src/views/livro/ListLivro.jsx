@@ -1,41 +1,61 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Button,
   Container,
-  Icon,
-  Table,
-  Image,
-  Modal,
+  Divider,
   Header,
+  Icon,
+  Modal,
+  Table,
 } from "semantic-ui-react";
-import { Link } from "react-router-dom";
-import axios from "axios";
 import MenuSistema from "../../MenuSistema";
 
 export default function ListLivro() {
   const [lista, setLista] = useState([]);
+  const [modalAberto, setModalAberto] = useState(false);
+  const [entregadorSelecionado, setEntregadorSelecionado] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  const [idRemover, setIdRemover] = useState(null);
+  const [idRemover, setIdRemover] = useState();
 
   useEffect(() => {
     carregarLista();
   }, []);
 
   function confirmaRemover(id) {
-    setIdRemover(id);
     setOpenModal(true);
+    setIdRemover(id);
   }
 
+  // Ajuste aqui para validar o dado antes de setar o estado
   function carregarLista() {
-    axios.get("http://localhost:8080/api/livro").then((response) => {
-      setLista(response.data);
-    });
+    axios
+      .get("http://localhost:8080/api/livro")
+      .then((response) => {
+        console.log("DEBUG DA API:", response.data);
+        if (Array.isArray(response.data)) {
+          setLista(response.data);
+        } else {
+          console.error("Resposta da API não é um array:", response.data);
+          setLista([]); // evita erro no map
+        }
+      })
+      .catch((error) => {
+        console.error("Erro ao carregar lista:", error);
+        setLista([]); // evita erro no map em caso de erro
+      });
   }
 
-  function formatarData(data) {
-    if (!data) return "";
-    const [ano, mes, dia] = data.split("-");
-    return `${dia}/${mes}/${ano}`;
+  function formatarData(dataParam) {
+    if (!dataParam) return "";
+    const arrayData = dataParam.split("-");
+    return `${arrayData[2]}/${arrayData[1]}/${arrayData[0]}`;
+  }
+
+  function abrirModal(livro) {
+    setEntregadorSelecionado(livro);
+    setModalAberto(true);
   }
 
   async function remover() {
@@ -44,12 +64,11 @@ export default function ListLivro() {
       .then((response) => {
         console.log("Livro removido com sucesso.");
 
-        axios.get("http://localhost:8080/api/livro").then((response) => {
-          setLista(response.data);
-        });
+        // Atualiza a lista após remover
+        carregarLista();
       })
       .catch((error) => {
-        console.log("Erro ao remover o Livro.");
+        console.log("Erro ao remover o Livro.", error);
       });
     setOpenModal(false);
   }
@@ -57,115 +76,181 @@ export default function ListLivro() {
   return (
     <div>
       <MenuSistema tela={"livro"} />
-      <Container style={{ marginTop: "3%" }} textAlign="justified">
-        <h2>
-          <span style={{ color: "darkgray" }}>
-            Livro <Icon name="angle double right" />
-          </span>
-          Listagem
-        </h2>
+      <div style={{ marginTop: "3%" }}>
+        <Container textAlign="justified">
+          <h2>Livros</h2>
+          <Divider />
 
-        <Link to="/form-livro">
-          <Button
-            color="green"
-            icon
-            labelPosition="left"
-            style={{ marginBottom: 20 }}
-          >
-            <Icon name="plus" />
-            Novo
-          </Button>
-        </Link>
+          <div style={{ marginTop: "4%" }}>
+            <Button
+              label="Novo"
+              circular
+              color="orange"
+              icon="clipboard outline"
+              floated="right"
+              as={Link}
+              to="/form-livro"
+            />
+            <br />
+            <br />
+            <br />
+            <Table textAlign="center" color="orange" sortable celled>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>Capa</Table.HeaderCell>
+                  <Table.HeaderCell>Título</Table.HeaderCell>
+                  <Table.HeaderCell>Autor</Table.HeaderCell>
+                  <Table.HeaderCell>Gênero</Table.HeaderCell>
+                  <Table.HeaderCell>ISBN</Table.HeaderCell>
+                  <Table.HeaderCell textAlign="center">Ações</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
 
-        <Table celled striped>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Imagem</Table.HeaderCell>
-              <Table.HeaderCell>ISBN</Table.HeaderCell>
-              <Table.HeaderCell>Título</Table.HeaderCell>
-              <Table.HeaderCell>Data Publicação</Table.HeaderCell>
-              <Table.HeaderCell>Gênero</Table.HeaderCell>
-              <Table.HeaderCell>Autor</Table.HeaderCell>
-              <Table.HeaderCell>Nacionalidade</Table.HeaderCell>
-              <Table.HeaderCell>PDF</Table.HeaderCell>
-              <Table.HeaderCell>Ações</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
+              <Table.Body>
+                {/* Adicione verificação antes do map */}
+                {Array.isArray(lista) && lista.length > 0 ? (
+                  lista.map((livro) => (
+                    <Table.Row key={livro.id}>
+                      <Table.Cell>
+                        <img
+                          src={`http://localhost:8080/api/livro/imagem/${livro.id}`}
+                          alt={`Capa do livro ${livro.titulo}`}
+                          style={{
+                            width: "60px",
+                            height: "auto",
+                            objectFit: "cover",
+                          }}
+                          onError={(e) => {
+                            if (
+                              e.currentTarget.src !==
+                              window.location.origin + "/default.jpg"
+                            ) {
+                              e.currentTarget.src = "/default.jpg";
+                            }
+                          }}
+                        />
+                      </Table.Cell>
 
-          <Table.Body>
-            {lista.map((livro) => (
-              <Table.Row key={livro.id}>
-                <Table.Cell>
-                  {livro.imagem ? (
-                    <Image
-                      src={`http://localhost:8080/api/livro/${livro.id}/imagem`}
-                      size="tiny"
-                      bordered
-                    />
-                  ) : (
-                    <span>Sem imagem</span>
-                  )}
-                </Table.Cell>
-                <Table.Cell>{livro.isbn}</Table.Cell>
-                <Table.Cell>{livro.titulo}</Table.Cell>
-                <Table.Cell>{formatarData(livro.dataPublicacao)}</Table.Cell>
-                <Table.Cell>{livro.genero}</Table.Cell>
-                <Table.Cell>{livro.nomeAutor}</Table.Cell>
-                <Table.Cell>{livro.nacionalidadeAutor}</Table.Cell>
-                <Table.Cell>
-                  {livro.pdf ? (
-                    <a
-                      href={`http://localhost:8080/api/livro/${livro.id}/pdf`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Ver PDF
-                    </a>
-                  ) : (
-                    <span>Sem PDF</span>
-                  )}
-                </Table.Cell>
-                <Table.Cell>
-                  <Link to="/form-livro" state={{ id: livro.id }}>
-                    <Button color="blue" size="small" icon title="Editar">
-                      <Icon name="edit" />
-                    </Button>
-                  </Link>
-                  <Button
-                    color="red"
-                    size="small"
-                    icon
-                    title="Excluir"
-                    onClick={() => confirmaRemover(livro.id)}
-                  >
-                    <Icon name="trash" />
-                  </Button>
-                </Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table>
-      </Container>
+                      <Table.Cell>{livro.titulo}</Table.Cell>
+                      <Table.Cell>{livro.autor}</Table.Cell>
+                      <Table.Cell>{livro.genero}</Table.Cell>
+                      <Table.Cell>{livro.isbn}</Table.Cell>
+                      <Table.Cell textAlign="center">
+                        <Button
+                          inverted
+                          circular
+                          color="green"
+                          title="Clique aqui para editar os dados deste Livro"
+                          icon
+                        >
+                          <Link
+                            to="/form-livro"
+                            state={{ id: livro.id }}
+                            style={{ color: "green" }}
+                          >
+                            <Icon name="edit" />
+                          </Link>
+                        </Button>{" "}
+                        &nbsp;
+                        <Button
+                          inverted
+                          circular
+                          color="red"
+                          title="Clique aqui para remover este Livro"
+                          icon
+                          onClick={() => confirmaRemover(livro.id)}
+                        >
+                          <Icon name="trash" />
+                        </Button>{" "}
+                        &nbsp;
+                        <Button
+                          inverted
+                          circular
+                          color="blue"
+                          title="Ver detalhes"
+                          icon
+                          onClick={() => abrirModal(livro)}
+                        >
+                          <Icon name="eye" />
+                        </Button>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))
+                ) : (
+                  <Table.Row>
+                    <Table.Cell colSpan="6">
+                      Nenhum livro encontrado.
+                    </Table.Cell>
+                  </Table.Row>
+                )}
+              </Table.Body>
+            </Table>
+          </div>
 
-      <Modal basic open={openModal} onClose={() => setOpenModal(false)}>
-        <Header icon>
-          <Icon name="trash" />
-          Tem certeza que deseja remover esse livro?
-        </Header>
-        <Modal.Actions>
-          <Button
+          {/* ...restante do seu código de modal */}
+          <Modal
             basic
-            color="red"
-            inverted
-            onClick={() => setOpenModal(false)}
+            onClose={() => setOpenModal(false)}
+            onOpen={() => setOpenModal(true)}
+            open={openModal}
           >
-            <Icon name="remove" /> Não
-          </Button>
-          <Button color="green" inverted onClick={() => remover()}>
-            <Icon name="checkmark" /> Sim
-          </Button>
-        </Modal.Actions>
-      </Modal>
+            <Header icon>
+              <Icon name="trash" />
+              <div style={{ marginTop: "5%" }}>
+                {" "}
+                Tem certeza que deseja remover esse registro?{" "}
+              </div>
+            </Header>
+            <Modal.Actions>
+              <Button
+                basic
+                color="red"
+                inverted
+                onClick={() => setOpenModal(false)}
+              >
+                <Icon name="remove" /> Não
+              </Button>
+              <Button color="green" inverted onClick={() => remover()}>
+                <Icon name="checkmark" /> Sim
+              </Button>
+            </Modal.Actions>
+          </Modal>
+
+          <Modal
+            onClose={() => setModalAberto(false)}
+            open={modalAberto}
+            size="small"
+          >
+            <Modal.Header>Detalhes do Livro</Modal.Header>
+            <Modal.Content>
+              {entregadorSelecionado && (
+                <div>
+                  {/* Aqui você está mostrando dados de entregador, mas o modal é de livro?
+                      Talvez precise ajustar os campos para os dados corretos do livro */}
+                  <p>
+                    <strong>Título:</strong> {entregadorSelecionado.titulo}
+                  </p>
+                  <p>
+                    <strong>Autor:</strong> {entregadorSelecionado.autor}
+                  </p>
+                  <p>
+                    <strong>Gênero:</strong> {entregadorSelecionado.genero}
+                  </p>
+                  <p>
+                    <strong>ISBN:</strong> {entregadorSelecionado.isbn}
+                  </p>
+                  {/* Adicione outros campos que queira mostrar */}
+                </div>
+              )}
+            </Modal.Content>
+            <Modal.Actions>
+              <Button color="black" onClick={() => setModalAberto(false)}>
+                Fechar
+              </Button>
+            </Modal.Actions>
+          </Modal>
+        </Container>
+      </div>
     </div>
   );
 }

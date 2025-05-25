@@ -27,9 +27,9 @@ export default function ListProduto() {
   }
 
   function carregarLista() {
-    axios.get("http://localhost:8080/api/produto").then((response) => {
-      setLista(response.data);
-    });
+    axios
+      .get("http://localhost:8080/api/produto", { withCredentials: true })
+      .then((response) => setLista(response.data));
   }
 
   async function remover() {

@@ -54,44 +54,47 @@ export default function FormLivro() {
   }, [state]);
 
   function salvar() {
-    console.log("ID do livro no salvar():", idLivro);
+    const formData = new FormData();
+    formData.append("titulo", titulo);
+    formData.append("autor", autor);
+    formData.append("dataPublicacao", dataPublicacao);
+    formData.append("genero", genero);
+    formData.append("preco", preco);
+    formData.append("isbn", isbn);
+    formData.append("nacionalidadeAutor", nacionalidadeAutor);
 
-    let livroRequest = {
-      titulo: titulo,
-      autor: autor,
-      dataPublicacao: dataPublicacao,
-      genero: genero,
-      preco: preco,
-      isbn: isbn,
-      nacionalidadeAutor: nacionalidadeAutor,
-      imagem: imagem,
-      imagem_url: imagem_url,
-      pdf: pdf,
-    };
+    if (imagem) formData.append("imagem", imagem);
+    if (imagem_url) formData.append("imagem_url", imagem_url);
+    if (pdf) formData.append("pdf", pdf);
 
     if (idLivro != null) {
-      //Alteração:
       axios
-        .put("http://localhost:8080/api/livro/" + idLivro, livroRequest)
-        .then((response) => {
+        .put(`http://localhost:8080/api/livro/${idLivro}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(() => {
           console.log("Livro alterado com sucesso.");
         })
         .catch((error) => {
-          console.log("Erro ao alter um Livro.");
+          console.log("Erro ao alterar o Livro:", error);
         });
     } else {
-      //Cadastro:
       axios
-        .post("http://localhost:8080/api/livro", livroRequest)
-        .then((response) => {
+        .post("http://localhost:8080/api/livro", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(() => {
           console.log("Livro cadastrado com sucesso.");
         })
         .catch((error) => {
-          console.log("Erro ao incluir o Livro.");
+          console.log("Erro ao incluir o Livro:", error);
         });
     }
   }
-
   function formatarData(dataParam) {
     if (dataParam === null || dataParam === "" || dataParam === undefined) {
       return "";
@@ -172,16 +175,16 @@ export default function FormLivro() {
                 onChange={(e, { value }) => setGenero(value)}
               />
 
-              <Form.Group widths="equal">
-                <Form.Field width={3}>
-                  <label>Preço</label>
-                  <InputMask
-                    mask="R$99,99"
-                    value={preco}
-                    onChange={(e) => setPreco(e.target.value)}
-                  />
-                </Form.Field>
+              <Form.Input
+                required
+                fluid
+                label="Preço"
+                maxLength="100"
+                value={preco}
+                onChange={(e) => setPreco(e.target.value)}
+              />
 
+              <Form.Group widths="equal">
                 <Form.Input
                   required
                   fluid
