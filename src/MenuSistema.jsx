@@ -26,8 +26,8 @@ export default function MenuSistema(props) {
           to="/list-usuario"
         />
         <Menu.Item
-          content="Entregador"
-          active={props.tela === "entregador"}
+          content="Sobre"
+          active={props.tela === "sobre"}
           as={Link}
           to="/list-entregador"
         />
