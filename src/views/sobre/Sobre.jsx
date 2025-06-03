@@ -13,9 +13,13 @@ export default function Sobre() {
                 <Image src="/logo-IFPE.png" size="large" />
               </Grid.Column>
               <Grid.Column>
-                Bem vindo ao sistema <strong>OxeFood</strong> ! <br />
-                Este sistema foi desenvolvido na disciplina de Desenvolvimento
-                para WEB III. <br /> <br />
+                Bem vindo ao sistema de Biblioteca online também conhecindo como{" "}
+                <strong>Bibliotech</strong> ! <br />
+                Este sistema foi desenvolvido com o foco na praticidade e
+                facilidade em encontrar livros publicos tanto para ler como para
+                baixar online. _créditos a <strong>Roberto Alencar</strong>{" "}
+                professor da disciplina de Desenvolvimento para WEB III na
+                instituição IFPE de Jaboatão dos Guararapes. <br /> <br />
                 Para acessar o código da <strong>API</strong> do sistema,
                 acesse:{" "}
                 <a
