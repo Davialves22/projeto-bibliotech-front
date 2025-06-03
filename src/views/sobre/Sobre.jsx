@@ -1,7 +1,7 @@
 import { Container, Grid, Image } from "semantic-ui-react";
 import MenuSistema from "../../MenuSistema";
 
-export default function ListEntregador() {
+export default function Sobre() {
   return (
     <div>
       <MenuSistema tela={"sobre"} />
