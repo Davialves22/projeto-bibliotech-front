@@ -34,7 +34,7 @@ export default function MenuSistema(props) {
 
         <Menu.Menu position="right">
           <Menu.Item>
-            <img src="/logo192.png" alt="Logo" style={{ height: "30px" }} />
+            <img src="/favicon.ico" alt="Logo" style={{ height: "30px" }} />
           </Menu.Item>
         </Menu.Menu>
       </Menu>
