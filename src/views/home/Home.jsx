@@ -42,7 +42,8 @@ export default function Home() {
   // Inicializa generosEnum com a lista fallback
   const [generosEnum, setGenerosEnum] = useState(generosDefaultFallback);
   const [loadingGeneros, setLoadingGeneros] = useState(true);
-  const [errorGeneros, setErrorGeneros] = useState(null); // Estado para erros na requisição
+  // O estado errorGeneros ainda existe, mas não será exibido na UI para o usuário final
+  const [errorGeneros, setErrorGeneros] = useState(null);
 
   // livros filtrados segundo o filtro
   const livrosFiltrados =
@@ -56,7 +57,7 @@ export default function Home() {
     const fetchGeneros = async () => {
       try {
         setLoadingGeneros(true);
-        setErrorGeneros(null);
+        setErrorGeneros(null); // Limpa erros anteriores, caso haja algum erro na tentativa anterior
 
         const response = await fetch('http://localhost:8080/api/genero'); // Seu endpoint da API
         if (!response.ok) {
@@ -66,9 +67,9 @@ export default function Home() {
         // Se a API retornar dados, atualize o estado com eles
         setGenerosEnum(data);
       } catch (error) {
-        console.error("Erro ao buscar gêneros:", error);
-        setErrorGeneros("Não foi possível carregar os gêneros do servidor. Usando lista padrão.");
-        // Não altera generosEnum aqui, pois ele já está com a lista default
+        console.error("Erro ao buscar gêneros (usando fallback):", error);
+        // Apenas registra o erro no console, mas não define uma mensagem para a UI
+        setErrorGeneros(error); // Mantém o erro no estado para depuração interna se necessário
       } finally {
         setLoadingGeneros(false);
       }
@@ -87,32 +88,24 @@ export default function Home() {
             active={filtro === "TODOS"}
             onClick={() => setFiltro("TODOS")}
           />
-          {/* Mostra loader apenas se ainda estiver carregando E não houver erro */}
-          {loadingGeneros && !errorGeneros ? (
+          {/* Mostra loader apenas se ainda estiver carregando */}
+          {loadingGeneros ? (
             <Dimmer active inverted>
               <Loader inverted>Carregando Gêneros...</Loader>
             </Dimmer>
           ) : (
-            // Exibe mensagem de erro se houver um, mas ainda usa os generosEnum (que será o fallback)
-            <>
-              {errorGeneros && (
-                <Message negative style={{ marginLeft: '1em' }}>
-                  <Message.Header>Aviso</Message.Header>
-                  <p>{errorGeneros}</p>
-                </Message>
-              )}
-              {generosEnum.map((genero) => (
-                <Menu.Item
-                  key={genero}
-                  name={genero}
-                  active={filtro === genero}
-                  onClick={() => setFiltro(genero)}
-                  text={genero.charAt(0) + genero.slice(1).toLowerCase()}
-                >
-                  {genero.charAt(0) + genero.slice(1).toLowerCase()}
-                </Menu.Item>
-              ))}
-            </>
+            // Sempre mapeia generosEnum, que será o da API ou o fallback
+            generosEnum.map((genero) => (
+              <Menu.Item
+                key={genero}
+                name={genero}
+                active={filtro === genero}
+                onClick={() => setFiltro(genero)}
+                text={genero.charAt(0) + genero.slice(1).toLowerCase()}
+              >
+                {genero.charAt(0) + genero.slice(1).toLowerCase()}
+              </Menu.Item>
+            ))
           )}
         </Menu>
 
