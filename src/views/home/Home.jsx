@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react"; // Adicione useEffect
-import { Container, Menu, Card, Image, Message, Loader, Dimmer } from "semantic-ui-react"; // Adicione Loader e Dimmer
+import React, { useState, useEffect } from "react";
+import { Container, Menu, Card, Image, Message, Loader, Dimmer } from "semantic-ui-react";
 
 import capaDomCasmurro from "../../assets/livro1.jpeg";
 import capaOAlienista from "../../assets/livro2.jpeg";
 import MenuSistema from "../../MenuSistema";
 
-// Seus livros default (só Romance por enquanto) - Podem ser buscados da API também
+// Seus livros default (só Romance por enquanto)
 const livrosDefault = [
   {
     id: 1,
@@ -25,10 +25,23 @@ const livrosDefault = [
   },
 ];
 
+// Lista completa de gêneros default (fallback)
+const generosDefaultFallback = [
+  "FICCAO",
+  "ROMANCE",
+  "DRAMA",
+  "COMEDIA",
+  "FANTASIA",
+  "TERROR",
+  "DOCUMENTARIO",
+  "BIOGRAFIA",
+];
+
 export default function Home() {
   const [filtro, setFiltro] = useState("TODOS");
-  const [generosEnum, setGenerosEnum] = useState([]); // Estado para armazenar os gêneros da API
-  const [loadingGeneros, setLoadingGeneros] = useState(true); // Estado para controlar o carregamento
+  // Inicializa generosEnum com a lista fallback
+  const [generosEnum, setGenerosEnum] = useState(generosDefaultFallback);
+  const [loadingGeneros, setLoadingGeneros] = useState(true);
   const [errorGeneros, setErrorGeneros] = useState(null); // Estado para erros na requisição
 
   // livros filtrados segundo o filtro
@@ -43,25 +56,26 @@ export default function Home() {
     const fetchGeneros = async () => {
       try {
         setLoadingGeneros(true);
-        setErrorGeneros(null); // Limpa erros anteriores
-        // Substitua 'SUA_URL_DA_API/generos' pelo endpoint real da sua API
-        // Exemplo: 'http://localhost:8080/api/livros/generos'
-        const response = await fetch('http://localhost:8080/api/genero'); // <-- ATENÇÃO AQUI!
+        setErrorGeneros(null);
+
+        const response = await fetch('http://localhost:8080/api/genero'); // Seu endpoint da API
         if (!response.ok) {
           throw new Error(`Erro HTTP! status: ${response.status}`);
         }
         const data = await response.json();
-        setGenerosEnum(data); // Assume que a API retorna um array de strings
+        // Se a API retornar dados, atualize o estado com eles
+        setGenerosEnum(data);
       } catch (error) {
         console.error("Erro ao buscar gêneros:", error);
-        setErrorGeneros("Não foi possível carregar os gêneros. Tente novamente mais tarde.");
+        setErrorGeneros("Não foi possível carregar os gêneros do servidor. Usando lista padrão.");
+        // Não altera generosEnum aqui, pois ele já está com a lista default
       } finally {
         setLoadingGeneros(false);
       }
     };
 
     fetchGeneros();
-  }, []); // O array vazio [] garante que o useEffect rode apenas uma vez, na montagem do componente
+  }, []); // Roda apenas uma vez na montagem
 
   return (
     <>
@@ -73,27 +87,32 @@ export default function Home() {
             active={filtro === "TODOS"}
             onClick={() => setFiltro("TODOS")}
           />
-          {loadingGeneros ? (
+          {/* Mostra loader apenas se ainda estiver carregando E não houver erro */}
+          {loadingGeneros && !errorGeneros ? (
             <Dimmer active inverted>
               <Loader inverted>Carregando Gêneros...</Loader>
             </Dimmer>
-          ) : errorGeneros ? (
-            <Message negative>
-              <Message.Header>Erro ao carregar</Message.Header>
-              <p>{errorGeneros}</p>
-            </Message>
           ) : (
-            generosEnum.map((genero) => (
-              <Menu.Item
-                key={genero}
-                name={genero}
-                active={filtro === genero}
-                onClick={() => setFiltro(genero)}
-                text={genero.charAt(0) + genero.slice(1).toLowerCase()}
-              >
-                {genero.charAt(0) + genero.slice(1).toLowerCase()}
-              </Menu.Item>
-            ))
+            // Exibe mensagem de erro se houver um, mas ainda usa os generosEnum (que será o fallback)
+            <>
+              {errorGeneros && (
+                <Message negative style={{ marginLeft: '1em' }}>
+                  <Message.Header>Aviso</Message.Header>
+                  <p>{errorGeneros}</p>
+                </Message>
+              )}
+              {generosEnum.map((genero) => (
+                <Menu.Item
+                  key={genero}
+                  name={genero}
+                  active={filtro === genero}
+                  onClick={() => setFiltro(genero)}
+                  text={genero.charAt(0) + genero.slice(1).toLowerCase()}
+                >
+                  {genero.charAt(0) + genero.slice(1).toLowerCase()}
+                </Menu.Item>
+              ))}
+            </>
           )}
         </Menu>
 
