@@ -4,6 +4,7 @@ import Home from "./views/home/Home";
 import FormLivro from "./views/livro/FormLivro";
 import ListLivro from "./views/livro/ListLivro";
 import Sobre from "./views/sobre/Sobre";
+import FormUsuario from "./views/usuario/FormUsuario";
 
 function Rotas() {
   return (
@@ -12,6 +13,8 @@ function Rotas() {
         <Route path="/" element={<Home />} />
         <Route path="form-livro" element={<FormLivro />} />
         <Route path="list-livro" element={<ListLivro />} />
+        <Route path="form-usuario" element={<FormUsuario />} />
+
         <Route path="sobre" element={<Sobre />} />
       </Routes>
     </>

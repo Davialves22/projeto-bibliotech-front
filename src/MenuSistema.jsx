@@ -23,7 +23,7 @@ export default function MenuSistema(props) {
           content="Usuário"
           active={props.tela === "usuario"}
           as={Link}
-          to="/list-usuario"
+          to="/form-usuario"
         />
         <Menu.Item
           content="Sobre"

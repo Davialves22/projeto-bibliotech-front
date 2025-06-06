@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from "react";
+import axios from "axios";
 import InputMask from "comigo-tech-react-input-mask";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
   Button,
   Container,
   Divider,
   Form,
   Icon,
-  Message,
 } from "semantic-ui-react";
 import MenuSistema from "../../MenuSistema";
-import axios from "axios";
-import { Link, useLocation } from "react-router-dom";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function FormLivro() {
   const { state } = useLocation();
@@ -27,10 +29,6 @@ export default function FormLivro() {
   const [imagem, setImagem] = useState(null);
   const [imagem_url, setImagem_url] = useState("");
   const [pdf, setPdf] = useState(null);
-
-  // Mensagem animada
-  const [mensagem, setMensagem] = useState(null);
-  const [tipoMensagem, setTipoMensagem] = useState(""); // 'success' ou 'error'
 
   const listaGeneros = [
     { key: "FICCAO", text: "Ficção", value: "FICCAO" },
@@ -58,6 +56,10 @@ export default function FormLivro() {
           setIsbn(data.isbn);
           setNacionalidadeAutor(data.nacionalidadeAutor);
           setImagem_url(data.imagemUrl);
+        })
+        .catch((error) => {
+          console.error("Erro ao carregar livro:", error);
+          toast.error("Erro ao carregar dados do livro.");
         });
     }
   }, [state]);
@@ -92,18 +94,13 @@ export default function FormLivro() {
 
     request
       .then(() => {
-        mostrarMensagem("Livro salvo com sucesso!", "success");
+        console.log("Livro salvo com sucesso!");
+        toast.success("Livro salvo com sucesso!");
       })
       .catch((error) => {
         console.error("Erro ao salvar o Livro:", error);
-        mostrarMensagem("Erro ao salvar o livro. Verifique os dados.", "error");
+        toast.error("Erro ao salvar o livro. Verifique os dados.");
       });
-  }
-
-  function mostrarMensagem(texto, tipo) {
-    setMensagem(texto);
-    setTipoMensagem(tipo);
-    setTimeout(() => setMensagem(null), 4000);
   }
 
   function formatarPreco(valor) {
@@ -139,28 +136,6 @@ export default function FormLivro() {
 
           <Divider />
 
-          {/* Mensagem de feedback */}
-          {mensagem && (
-            <Message
-              success={tipoMensagem === "success"}
-              error={tipoMensagem === "error"}
-              icon
-              onDismiss={() => setMensagem(null)}
-            >
-              <Icon
-                name={
-                  tipoMensagem === "success" ? "check circle" : "times circle"
-                }
-              />
-              <Message.Content>
-                <Message.Header>
-                  {tipoMensagem === "success" ? "Sucesso!" : "Erro!"}
-                </Message.Header>
-                {mensagem}
-              </Message.Content>
-            </Message>
-          )}
-
           <Form>
             <Form.Group widths="equal">
               <Form.Input
@@ -182,7 +157,6 @@ export default function FormLivro() {
               <Form.Input fluid label="Data de Publicação" width={6}>
                 <InputMask
                   mask="99/99/9999"
-                  maskChar={null}
                   placeholder="Ex: 20/03/1985"
                   value={dataPublicacao}
                   onChange={(e) => setDatapublicacao(e.target.value)}
@@ -256,13 +230,7 @@ export default function FormLivro() {
 
           <div style={{ marginTop: "4%" }}>
             <Link to={"/list-livro"}>
-              <Button
-                inverted
-                circular
-                icon
-                labelPosition="left"
-                color="orange"
-              >
+              <Button inverted circular icon labelPosition="left" color="orange">
                 <Icon name="reply" /> Voltar
               </Button>
             </Link>
@@ -281,6 +249,8 @@ export default function FormLivro() {
           </div>
         </Container>
       </div>
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 }
