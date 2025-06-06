@@ -48,6 +48,18 @@ export default function Sobre() {
                     <Icon name="code branch" color="blue" />
                     <strong>API:</strong>{" "}
                     <a
+                      href="https://github.com/Davialves22/projeto-bibliotech-front.git"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      github.com/Davialves22/projeto-bibliotech-front
+                    </a>
+                  </p>
+
+                  <p>
+                    <Icon name="code branch" color="blue" />
+                    <strong>API BASE_ROBERTO:</strong>{" "}
+                    <a
                       href="https://github.com/robertoalencar/oxefood-api"
                       target="_blank"
                       rel="noreferrer"
@@ -55,9 +67,10 @@ export default function Sobre() {
                       github.com/robertoalencar/oxefood-api
                     </a>
                   </p>
+
                   <p>
                     <Icon name="desktop" color="teal" />
-                    <strong>Módulo WEB:</strong>{" "}
+                    <strong>Módulo WEB usado:</strong>{" "}
                     <a
                       href="https://github.com/robertoalencar/oxefood-web"
                       target="_blank"
