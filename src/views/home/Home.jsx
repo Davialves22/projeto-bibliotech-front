@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Menu, Card, Image, Message, Loader, Dimmer } from "semantic-ui-react";
+import { Container, Menu, Card, Image, Message, Loader, Dimmer, Icon, } from "semantic-ui-react";
 
 import capaDomCasmurro from "../../assets/livro1.jpeg";
 import capaOAlienista from "../../assets/livro2.jpeg";
@@ -82,6 +82,13 @@ export default function Home() {
     <>
       <MenuSistema tela={"home"} />
       <Container style={{ marginTop: "2em" }}>
+        <h2 style = {{textAlign:"left"}}>
+            <span style={{ color: "black"}}>
+              Livros &nbsp;
+              <Icon name="angle double right" size="small" />
+            </span>
+          </h2>
+
         <Menu pointing secondary>
           <Menu.Item
             name="TODOS"
