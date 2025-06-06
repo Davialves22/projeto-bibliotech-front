@@ -14,6 +14,9 @@ import MenuSistema from "../../MenuSistema";
 import capaDomCasmurro from "../../assets/livro1.jpeg";
 import capaOAlienista from "../../assets/livro2.jpeg";
 
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 export default function ListLivro() {
   const [lista, setLista] = useState([]);
   const [modalAberto, setModalAberto] = useState(false);
@@ -32,24 +35,23 @@ export default function ListLivro() {
 
   function carregarLista() {
     const livrosDefault = [
-  {
-    id: 1,
-    titulo: "Dom Casmurro",
-    nomeAutor: "Machado de Assis",
-    genero: "Romance",
-    isbn: "978-85-359-0277-7",
-    urlImagem: capaDomCasmurro,
-  },
-  {
-    id: 2,
-    titulo: "O Alienista",
-    nomeAutor: "Machado de Assis",
-    genero: "Conto",
-    isbn: "978-85-359-0212-8",
-    urlImagem: capaOAlienista,
-  },
-];
-
+      {
+        id: 1,
+        titulo: "Dom Casmurro",
+        nomeAutor: "Machado de Assis",
+        genero: "Romance",
+        isbn: "978-85-359-0277-7",
+        urlImagem: capaDomCasmurro,
+      },
+      {
+        id: 2,
+        titulo: "O Alienista",
+        nomeAutor: "Machado de Assis",
+        genero: "Conto",
+        isbn: "978-85-359-0212-8",
+        urlImagem: capaOAlienista,
+      },
+    ];
 
     axios
       .get("http://localhost:8080/api/livro")
@@ -86,6 +88,37 @@ export default function ListLivro() {
         console.log("Erro ao remover o Livro.", error);
       });
     setOpenModal(false);
+  }
+
+  async function baixarPdf(livro) {
+    if (!livro || !livro.id) {
+      toast.error("Livro inválido.");
+      return;
+    }
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/livro/pdf/${livro.id}`,
+        {
+          responseType: "blob", // importante para arquivo binário
+        }
+      );
+
+      // Cria URL para download
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${livro.titulo}.pdf`); // nome do arquivo
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success("Download iniciado.");
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        toast.error("Livro não encontrado.");
+      } else {
+        toast.error("Erro ao baixar o PDF.");
+      }
+    }
   }
 
   return (
@@ -189,15 +222,24 @@ export default function ListLivro() {
                           onClick={() => abrirModal(livro)}
                         >
                           <Icon name="eye" />
+                        </Button>{" "}
+                        &nbsp;
+                        <Button
+                          inverted
+                          circular
+                          color="violet"
+                          title="Download do PDF"
+                          icon
+                          onClick={() => baixarPdf(livro)}
+                        >
+                          <Icon name="download" />
                         </Button>
                       </Table.Cell>
                     </Table.Row>
                   ))
                 ) : (
                   <Table.Row>
-                    <Table.Cell colSpan="6">
-                      Nenhum livro encontrado.
-                    </Table.Cell>
+                    <Table.Cell colSpan="6">Nenhum livro encontrado.</Table.Cell>
                   </Table.Row>
                 )}
               </Table.Body>
@@ -247,8 +289,7 @@ export default function ListLivro() {
                   </p>
                   <p>
                     <strong>Autor:</strong>{" "}
-                    {entregadorSelecionado.nomeAutor ||
-                      entregadorSelecionado.autor}
+                    {entregadorSelecionado.nomeAutor || entregadorSelecionado.autor}
                   </p>
                   <p>
                     <strong>Gênero:</strong> {entregadorSelecionado.genero}
@@ -267,6 +308,9 @@ export default function ListLivro() {
           </Modal>
         </Container>
       </div>
+
+      {/* Toast Container para mostrar as notificações */}
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 }
