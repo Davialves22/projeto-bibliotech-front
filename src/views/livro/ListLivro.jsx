@@ -126,7 +126,7 @@ export default function ListLivro() {
       <MenuSistema tela={"livro"} />
       <div style={{ marginTop: "3%" }}>
         <Container textAlign="justified">
-          <h2>Livros Cadastrados</h2>
+          <h2>Livros Cadastrados por: </h2>
           <Divider />
 
           <div style={{ marginTop: "4%" }}>
