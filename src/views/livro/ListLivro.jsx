@@ -41,7 +41,7 @@ export default function ListLivro() {
         nomeAutor: "Machado de Assis",
         genero: "Romance",
         isbn: "978-85-359-0277-7",
-        urlImagem: capaDomCasmurro,
+        urlImagem: capaDomCasmurro, // imagem local importada
       },
       {
         id: 2,
@@ -49,7 +49,7 @@ export default function ListLivro() {
         nomeAutor: "Machado de Assis",
         genero: "Conto",
         isbn: "978-85-359-0212-8",
-        urlImagem: capaOAlienista,
+        urlImagem: capaOAlienista, // imagem local importada
       },
     ];
 
@@ -80,12 +80,13 @@ export default function ListLivro() {
   async function remover() {
     await axios
       .delete("http://localhost:8080/api/livro/" + idRemover)
-      .then((response) => {
-        console.log("Livro removido com sucesso.");
+      .then(() => {
+        toast.success("Livro removido com sucesso.");
         carregarLista();
       })
       .catch((error) => {
-        console.log("Erro ao remover o Livro.", error);
+        toast.error("Erro ao remover o Livro.");
+        console.error(error);
       });
     setOpenModal(false);
   }
@@ -99,15 +100,14 @@ export default function ListLivro() {
       const response = await axios.get(
         `http://localhost:8080/api/livro/pdf/${livro.id}`,
         {
-          responseType: "blob", // importante para arquivo binário
+          responseType: "blob",
         }
       );
 
-      // Cria URL para download
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `${livro.titulo}.pdf`); // nome do arquivo
+      link.setAttribute("download", `${livro.titulo}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -161,8 +161,9 @@ export default function ListLivro() {
                       <Table.Cell>
                         <img
                           src={
-                            livro.imagemUrl ||
-                            `http://localhost:8080/api/livro/imagem/${livro.id}`
+                            livro.urlImagem
+                              ? livro.urlImagem
+                              : `http://localhost:8080/api/livro/imagem/${livro.id}`
                           }
                           alt={`Capa do livro ${livro.titulo}`}
                           style={{
@@ -309,7 +310,6 @@ export default function ListLivro() {
         </Container>
       </div>
 
-      {/* Toast Container para mostrar as notificações */}
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
