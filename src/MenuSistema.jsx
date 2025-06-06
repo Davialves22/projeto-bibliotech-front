@@ -30,18 +30,30 @@ export default function MenuSistema(props) {
           </Dropdown.Menu>
         </Dropdown>
 
-        <Menu.Item
-          content="Usuário"
-          active={props.tela === "usuario"}
-          as={Link}
-          to="/form-usuario"
-        />
+      <Dropdown item text="Usuario">
+          <Dropdown.Menu>
+            <Dropdown.Item
+              as={Link}
+              to="/form-usuario"
+              text="Cadastro"
+              active={props.tela === "usuario" && window.location.pathname.includes("form")}
+            />
+            <Dropdown.Item
+              as={Link}
+              to="/list-usuario"
+              text="Ver Todos"
+              active={props.tela === "usuario" && window.location.pathname.includes("list")}
+            />
+          </Dropdown.Menu>
+        </Dropdown>
+
         <Menu.Item
           content="Sobre"
           active={props.tela === "sobre"}
           as={Link}
           to="/sobre"
         />
+
 
         <Menu.Menu position="right">
           <Menu.Item>
