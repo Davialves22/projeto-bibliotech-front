@@ -1,73 +1,100 @@
-import React, { useEffect, useState } from "react";
-import { Container, Menu, Card, Image, Button, Loader, Message } from "semantic-ui-react";
+import React, { useState } from "react";
+import { Container, Menu, Card, Image, Message } from "semantic-ui-react";
+
+import capaDomCasmurro from "../../assets/livro1.jpeg";
+import capaOAlienista from "../../assets/livro2.jpeg";
 import MenuSistema from "../../MenuSistema";
 
+// Seus livros default (só Romance por enquanto)
+const livrosDefault = [
+  {
+    id: 1,
+    titulo: "Dom Casmurro",
+    nomeAutor: "Machado de Assis",
+    genero: "Romance",
+    isbn: "978-85-359-0277-7",
+    urlImagem: capaDomCasmurro,
+  },
+  {
+    id: 2,
+    titulo: "O Alienista",
+    nomeAutor: "Machado de Assis",
+    genero: "Romance",
+    isbn: "978-85-359-0212-8",
+    urlImagem: capaOAlienista,
+  },
+];
+
+// Lista completa de gêneros do enum
+const generosEnum = [
+  "FICCAO",
+  "ROMANCE",
+  "DRAMA",
+  "COMEDIA",
+  "FANTASIA",
+  "TERROR",
+  "DOCUMENTARIO",
+  "BIOGRAFIA",
+];
+
 export default function Home() {
-  const [generos, setGeneros] = useState([]);
-  const [livros, setLivros] = useState([]);
   const [filtro, setFiltro] = useState("TODOS");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    Promise.all([
-      fetch("http://localhost:8080/api/genero").then((res) => res.json()),
-      fetch("http://localhost:8080/api/livro").then((res) => res.json()),
-    ])
-      .then(([generosData, livrosData]) => {
-        setGeneros(["TODOS", ...generosData]);
-        setLivros(livrosData);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError("Erro ao carregar dados");
-        setLoading(false);
-      });
-  }, []);
-
+  // livros filtrados segundo o filtro
   const livrosFiltrados =
-    filtro === "TODOS" ? livros : livros.filter((livro) => livro.genero === filtro);
-
-  if (loading) return <Loader active inline="centered" content="Carregando livros..." />;
-
-  if (error) return <Message negative content={error} />;
+    filtro === "TODOS"
+      ? livrosDefault
+      : livrosDefault.filter(
+          (livro) => livro.genero.toUpperCase() === filtro.toUpperCase()
+        );
 
   return (
     <>
-      <MenuSistema tela={"home"} />
+    <MenuSistema tela={"home"} />
     <Container style={{ marginTop: "2em" }}>
       <Menu pointing secondary>
-        {generos.map((genero) => (
+        <Menu.Item
+          name="TODOS"
+          active={filtro === "TODOS"}
+          onClick={() => setFiltro("TODOS")}
+        />
+        {generosEnum.map((genero) => (
           <Menu.Item
             key={genero}
             name={genero}
             active={filtro === genero}
             onClick={() => setFiltro(genero)}
-          />
+            text={genero.charAt(0) + genero.slice(1).toLowerCase()}
+          >
+            {genero.charAt(0) + genero.slice(1).toLowerCase()}
+          </Menu.Item>
         ))}
       </Menu>
 
       {livrosFiltrados.length === 0 ? (
-        <Message info content="Nenhum livro encontrado para este gênero." />
+        <Message info>
+          Nenhum livro encontrado para a categoria{" "}
+          <strong>
+            {filtro.charAt(0) + filtro.slice(1).toLowerCase()}
+          </strong>
+          .
+        </Message>
       ) : (
         <Card.Group itemsPerRow={4} stackable>
           {livrosFiltrados.map((livro) => (
             <Card key={livro.id}>
               <Image
-                src={livro.imagemUrl || "https://via.placeholder.com/150x220?text=Sem+Capa"}
+                src={livro.urlImagem}
                 wrapped
                 ui={false}
                 alt={`Capa do livro ${livro.titulo}`}
+                style={{ height: "220px", objectFit: "cover" }}
               />
               <Card.Content>
                 <Card.Header>{livro.titulo}</Card.Header>
-                <Card.Meta>{livro.autor}</Card.Meta>
-                <Card.Description>{livro.descricao}</Card.Description>
-              </Card.Content>
-              <Card.Content extra>
-                <Button basic color="orange" size="small">
-                  Detalhes
-                </Button>
+                <Card.Meta>{livro.nomeAutor}</Card.Meta>
+                <Card.Description>Gênero: {livro.genero}</Card.Description>
+                <Card.Description>ISBN: {livro.isbn}</Card.Description>
               </Card.Content>
             </Card>
           ))}
