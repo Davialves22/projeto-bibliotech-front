@@ -11,6 +11,8 @@ import {
   Table,
 } from "semantic-ui-react";
 import MenuSistema from "../../MenuSistema";
+import capaDomCasmurro from "../../assets/livro1.jpeg";
+import capaOAlienista from "../../assets/livro2.jpeg";
 
 export default function ListLivro() {
   const [lista, setLista] = useState([]);
@@ -30,21 +32,24 @@ export default function ListLivro() {
 
   function carregarLista() {
     const livrosDefault = [
-      {
-        id: 1,
-        titulo: "Dom Casmurro",
-        nomeAutor: "Machado de Assis",
-        genero: "Romance",
-        isbn: "978-85-359-0277-7",
-        urlImagem:""},
-      {
-        id: 2,
-        titulo: "O Alienista",
-        nomeAutor: "Machado de Assis",
-        genero: "Conto",
-        isbn: "978-85-359-0212-8",
-        urlImagem:""},
-    ];
+  {
+    id: 1,
+    titulo: "Dom Casmurro",
+    nomeAutor: "Machado de Assis",
+    genero: "Romance",
+    isbn: "978-85-359-0277-7",
+    urlImagem: capaDomCasmurro,
+  },
+  {
+    id: 2,
+    titulo: "O Alienista",
+    nomeAutor: "Machado de Assis",
+    genero: "Conto",
+    isbn: "978-85-359-0212-8",
+    urlImagem: capaOAlienista,
+  },
+];
+
 
     axios
       .get("http://localhost:8080/api/livro")
