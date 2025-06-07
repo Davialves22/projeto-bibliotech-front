@@ -1,12 +1,14 @@
 import { Card as SemanticCard, Image as SemanticImage, Menu as SemanticMenu } from "semantic-ui-react";
 import styled from "styled-components";
 
+// Container centralizado e mais estreito
 export const Container = styled.div`
   max-width: 1000px;
   margin: 1.5em auto;
   padding: 0 0.5em;
 `;
 
+// Título menor
 export const Title = styled.h2`
   text-align: left;
   color: black;
@@ -16,6 +18,7 @@ export const Title = styled.h2`
   font-size: 1.1em;
 `;
 
+// Menu de categorias horizontal compacto
 export const Menu = styled(SemanticMenu)`
   overflow-x: auto !important;
   white-space: nowrap;
@@ -28,6 +31,7 @@ export const Menu = styled(SemanticMenu)`
   }
 `;
 
+// Grid de cards menor
 export const CardGroup = styled(SemanticCard.Group)`
   &&& {
     display: grid !important;
@@ -37,19 +41,21 @@ export const CardGroup = styled(SemanticCard.Group)`
   }
 `;
 
+// Card reduzido
 export const Card = styled(SemanticCard)`
   &&& {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 0.7em;
-    width: 50%;
+    width: 500%;
     font-size: 0.85em;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     background: #fff;
   }
 `;
 
+// Imagem menor
 export const Image = styled(SemanticImage)`
   width: 100% !important;
   height: auto !important;
@@ -57,6 +63,7 @@ export const Image = styled(SemanticImage)`
   border-radius: 3px;
 `;
 
+// Conteúdo centralizado compacto
 export const CardContentCenter = styled(SemanticCard.Content)`
   &&& {
     text-align: center;
@@ -64,6 +71,7 @@ export const CardContentCenter = styled(SemanticCard.Content)`
   }
 `;
 
+// Conteúdo extra no final mais compacto
 export const CardContentExtra = styled(SemanticCard.Content)`
   &&& {
     padding-top: 0.4em !important;
