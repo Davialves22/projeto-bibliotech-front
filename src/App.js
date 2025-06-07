@@ -1,8 +1,8 @@
-import React from 'react';
 
 import { Segment } from 'semantic-ui-react';
 import './App.css';
 import Rotas from './Rotas';
+import GlobalStyles from './styles/GlobalStyles';
 
 function App() {
 
@@ -10,6 +10,7 @@ function App() {
 
     <div className="App">
 
+      <GlobalStyles/>
       <Rotas />
 
       <div style={{ marginTop: '6%' }}>

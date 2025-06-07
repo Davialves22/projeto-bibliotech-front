@@ -1,15 +1,16 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Button, Loader, Message } from "semantic-ui-react";
+import MenuSistema from "../../MenuSistema";
+
 import {
-    Button,
-    Container,
-    Header,
-    Image,
-    Loader,
-    Message,
-    Segment,
-} from "semantic-ui-react";
+    ContainerStyled,
+    HeaderStyled,
+    ImageStyled,
+    InfoWrapper,
+    SegmentStyled,
+} from "./css/DetalhesLivro";
 
 export default function LivroDetalhes() {
   const { id } = useParams();
@@ -87,64 +88,67 @@ export default function LivroDetalhes() {
     return <Message negative content="Livro não encontrado." />;
 
   return (
-    <Container style={{ marginTop: "2em" }}>
-      <Header as="h2">{livro.titulo}</Header>
-      <Segment raised>
-        <Image
-          src={
-            livro.urlImagem
-              ? livro.urlImagem
-              : livro.imagem
-              ? `data:image/jpeg;base64,${livro.imagem}`
-              : "https://react.semantic-ui.com/images/wireframe/image.png"
-          }
-          size="medium"
-          floated="left"
-          rounded
-        />
-        <p>
-          <strong>Autor:</strong> {livro.nomeAutor}
-        </p>
-        <p>
-          <strong>ISBN:</strong> {livro.isbn}
-        </p>
-        <p>
-          <strong>Gênero:</strong> {livro.genero}
-        </p>
-        <p>
-          <strong>Data de Publicação:</strong> {livro.dataNascimento}
-        </p>
-        <p>
-          <strong>Nacionalidade do Autor:</strong> {livro.nacionalidadeAutor}
-        </p>
-        <p>
-          <strong>Preço:</strong> R$ {Number(livro.preco).toFixed(2)}
-        </p>
+    <>
+      <MenuSistema />
+      <ContainerStyled>
+        <HeaderStyled>{livro.titulo}</HeaderStyled>
+        <SegmentStyled>
+          <ImageStyled
+            src={
+              livro.urlImagem
+                ? livro.urlImagem
+                : livro.imagem
+                ? `data:image/jpeg;base64,${livro.imagem}`
+                : "https://react.semantic-ui.com/images/wireframe/image.png"
+            }
+            alt={`Capa do livro ${livro.titulo}`}
+          />
+          <InfoWrapper>
+            <p>
+              <strong>Autor:</strong> {livro.nomeAutor}
+            </p>
+            <p>
+              <strong>ISBN:</strong> {livro.isbn}
+            </p>
+            <p>
+              <strong>Gênero:</strong> {livro.genero}
+            </p>
+            <p>
+              <strong>Data de Publicação:</strong> {livro.dataNascimento}
+            </p>
+            <p>
+              <strong>Nacionalidade do Autor:</strong> {livro.nacionalidadeAutor}
+            </p>
+            <p>
+              <strong>Preço:</strong> R$ {Number(livro.preco).toFixed(2)}
+            </p>
 
-        {/* Botão de download */}
-        {livro.pdf ? (
-          <Button
-            color="green"
-            icon="download"
-            content="Baixar Livro (PDF do banco)"
-            onClick={baixarPdfBase64}
-            style={{ marginTop: "1em" }}
-          />
-        ) : livro.urlPdf ? (
-          <Button
-            color="blue"
-            icon="download"
-            content="Baixar Livro (PDF online)"
-            as="a"
-            href={livro.urlPdf}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ marginTop: "1em" }}
-          />
-        ) : (
-          <Message warning content="Este livro não possui PDF disponível." />
-        )}
-      </Segment>
-    </Container>
+            {/* Botão de download */}
+            {livro.pdf ? (
+              <Button
+                color="green"
+                icon="download"
+                content="Baixar Livro (PDF do banco)"
+                onClick={baixarPdfBase64}
+                style={{ marginTop: "1em" }}
+              />
+            ) : livro.urlPdf ? (
+              <Button
+                color="blue"
+                icon="download"
+                content="Baixar Livro (PDF online)"
+                as="a"
+                href={livro.urlPdf}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ marginTop: "1em" }}
+              />
+            ) : (
+              <Message warning content="Este livro não possui PDF disponível." />
+            )}
+          </InfoWrapper>
+        </SegmentStyled>
+      </ContainerStyled>
+    </>
   );
 }

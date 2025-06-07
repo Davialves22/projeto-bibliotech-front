@@ -2,19 +2,26 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Button,
-  Card,
-  Container,
   Dimmer,
   Icon,
-  Image,
   Loader,
-  Menu,
   Message,
 } from "semantic-ui-react";
 
 import capaDomCasmurro from "../../assets/livro1.jpeg";
 import capaOAlienista from "../../assets/livro2.jpeg";
 import MenuSistema from "../../MenuSistema";
+
+import {
+  Card,
+  CardContentCenter,
+  CardContentExtra,
+  CardGroup,
+  Container,
+  Image,
+  Menu,
+  Title,
+} from "./css/Home.styles";
 
 // Livros fallback
 const livrosDefault = [
@@ -111,13 +118,10 @@ export default function Home() {
   return (
     <>
       <MenuSistema tela={"home"} />
-      <Container style={{ marginTop: "2em" }}>
-        <h2 style={{ textAlign: "left" }}>
-          <span style={{ color: "black" }}>
-            Livros &nbsp;
-            <Icon name="angle double right" size="small" />
-          </span>
-        </h2>
+      <Container>
+        <Title>
+          Livros <Icon name="angle double right" size="small" />
+        </Title>
 
         <Menu pointing secondary>
           <Menu.Item
@@ -131,7 +135,6 @@ export default function Home() {
               name={genero}
               active={filtro === genero}
               onClick={() => setFiltro(genero)}
-              text={genero.charAt(0) + genero.slice(1).toLowerCase()}
             >
               {genero.charAt(0) + genero.slice(1).toLowerCase()}
             </Menu.Item>
@@ -151,7 +154,7 @@ export default function Home() {
             .
           </Message>
         ) : (
-          <Card.Group itemsPerRow={4} stackable>
+          <CardGroup>
             {livrosFiltrados.map((livro) => (
               <Card key={livro.id}>
                 <Image
@@ -159,19 +162,17 @@ export default function Home() {
                   wrapped
                   ui={false}
                   alt={`Capa do livro ${livro.titulo}`}
-                  style={{ height: "220px", objectFit: "cover" }}
                 />
-                <Card.Content textAlign="center">
+                <CardContentCenter>
                   <Card.Header style={{ marginTop: "0.5em" }}>
                     {livro.titulo}
                   </Card.Header>
-                </Card.Content>
+                </CardContentCenter>
                 <Card.Content>
                   <Card.Meta>{livro.nomeAutor}</Card.Meta>
                   <Card.Description>Gênero: {livro.genero}</Card.Description>
-                  <Card.Description>ISBN: {livro.isbn}</Card.Description>
                 </Card.Content>
-                <Card.Content extra>
+                <CardContentExtra>
                   <Button
                     as={Link}
                     to={`/livro/${livro.id}`}
@@ -193,10 +194,10 @@ export default function Home() {
                       content="Baixar PDF"
                     />
                   )}
-                </Card.Content>
+                </CardContentExtra>
               </Card>
             ))}
-          </Card.Group>
+          </CardGroup>
         )}
       </Container>
     </>
