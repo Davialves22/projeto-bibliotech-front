@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Button,
   Container,
@@ -19,19 +19,27 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function ListLivro() {
   const [lista, setLista] = useState([]);
+  const [listaOriginal, setListaOriginal] = useState([]);
   const [modalAberto, setModalAberto] = useState(false);
   const [entregadorSelecionado, setEntregadorSelecionado] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [idRemover, setIdRemover] = useState();
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const termoBuscaQuery = queryParams.get("busca") || "";
+
   useEffect(() => {
     carregarLista();
   }, []);
 
-  function confirmaRemover(id) {
-    setOpenModal(true);
-    setIdRemover(id);
-  }
+  useEffect(() => {
+    if (termoBuscaQuery && listaOriginal.length > 0) {
+      filtrarLivros(termoBuscaQuery);
+    } else {
+      setLista(listaOriginal);
+    }
+  }, [termoBuscaQuery, listaOriginal]);
 
   function carregarLista() {
     const livrosDefault = [
@@ -41,7 +49,7 @@ export default function ListLivro() {
         nomeAutor: "Machado de Assis",
         genero: "Romance",
         isbn: "978-85-359-0277-7",
-        urlImagem: capaDomCasmurro, // imagem local importada
+        urlImagem: capaDomCasmurro,
       },
       {
         id: 2,
@@ -49,32 +57,40 @@ export default function ListLivro() {
         nomeAutor: "Machado de Assis",
         genero: "Conto",
         isbn: "978-85-359-0212-8",
-        urlImagem: capaOAlienista, // imagem local importada
+        urlImagem: capaOAlienista,
       },
     ];
 
     axios
       .get("http://localhost:8080/api/livro")
       .then((response) => {
-        if (Array.isArray(response.data) && response.data.length > 0) {
-          setLista(response.data);
-        } else {
-          console.warn("API retornou lista vazia. Usando livros padrão.");
-          setLista(livrosDefault);
-        }
+        const livros = Array.isArray(response.data) && response.data.length > 0
+          ? response.data
+          : livrosDefault;
+        setLista(livros);
+        setListaOriginal(livros);
       })
       .catch((error) => {
-        console.error(
-          "Erro ao carregar lista da API. Usando livros padrão.",
-          error
-        );
+        console.error("Erro ao carregar lista da API. Usando livros padrão.", error);
         setLista(livrosDefault);
+        setListaOriginal(livrosDefault);
       });
   }
 
-  function abrirModal(livro) {
-    setEntregadorSelecionado(livro);
-    setModalAberto(true);
+  function filtrarLivros(termo) {
+    const termoLower = termo.toLowerCase();
+    const filtrados = listaOriginal.filter((livro) =>
+      livro.titulo.toLowerCase().includes(termoLower) ||
+      (livro.nomeAutor || livro.autor).toLowerCase().includes(termoLower) ||
+      livro.genero.toLowerCase().includes(termoLower) ||
+      livro.isbn.toLowerCase().includes(termoLower)
+    );
+    setLista(filtrados);
+  }
+
+  function confirmaRemover(id) {
+    setOpenModal(true);
+    setIdRemover(id);
   }
 
   async function remover() {
@@ -89,6 +105,11 @@ export default function ListLivro() {
         console.error(error);
       });
     setOpenModal(false);
+  }
+
+  function abrirModal(livro) {
+    setEntregadorSelecionado(livro);
+    setModalAberto(true);
   }
 
   async function baixarPdf(livro) {
@@ -113,7 +134,7 @@ export default function ListLivro() {
       link.remove();
       toast.success("Download iniciado.");
     } catch (error) {
-      if (error.response && error.response.status === 404) {
+      if (error.response?.status === 404) {
         toast.error("Livro não encontrado.");
       } else {
         toast.error("Erro ao baixar o PDF.");
@@ -123,7 +144,7 @@ export default function ListLivro() {
 
   return (
     <div>
-      <MenuSistema tela={"livro"} />
+      <MenuSistema tela="livro" />
       <div style={{ marginTop: "3%" }}>
         <Container textAlign="justified">
           <h2>Livros Cadastrados</h2>
@@ -155,82 +176,63 @@ export default function ListLivro() {
               </Table.Header>
 
               <Table.Body>
-                {Array.isArray(lista) && lista.length > 0 ? (
+                {lista.length > 0 ? (
                   lista.map((livro) => (
                     <Table.Row key={livro.id}>
                       <Table.Cell>
                         <img
                           src={
-                            livro.urlImagem
-                              ? livro.urlImagem
-                              : `http://localhost:8080/api/livro/imagem/${livro.id}`
+                            livro.urlImagem ||
+                            `http://localhost:8080/api/livro/imagem/${livro.id}`
                           }
                           alt={`Capa do livro ${livro.titulo}`}
-                          style={{
-                            width: "60px",
-                            height: "auto",
-                            objectFit: "cover",
-                          }}
+                          style={{ width: "60px", objectFit: "cover" }}
                           onError={(e) => {
-                            if (
-                              e.currentTarget.src !==
-                              window.location.origin + "/default.jpg"
-                            ) {
+                            if (e.currentTarget.src !== `${window.location.origin}/default.jpg`) {
                               e.currentTarget.src = "/default.jpg";
                             }
                           }}
                         />
                       </Table.Cell>
-
                       <Table.Cell>{livro.titulo}</Table.Cell>
                       <Table.Cell>{livro.nomeAutor || livro.autor}</Table.Cell>
                       <Table.Cell>{livro.genero}</Table.Cell>
                       <Table.Cell>{livro.isbn}</Table.Cell>
                       <Table.Cell textAlign="center">
-                        <Button
-                          inverted
-                          circular
-                          color="green"
-                          title="Clique aqui para editar os dados deste Livro"
-                          icon
-                        >
-                          <Link
-                            to="/form-livro"
-                            state={{ id: livro.id }}
-                            style={{ color: "green" }}
-                          >
+                        <Button inverted circular color="green" icon title="Editar">
+                          <Link to="/form-livro" state={{ id: livro.id }} style={{ color: "green" }}>
                             <Icon name="edit" />
                           </Link>
-                        </Button>{" "}
+                        </Button>
                         &nbsp;
                         <Button
                           inverted
                           circular
                           color="red"
-                          title="Clique aqui para remover este Livro"
                           icon
+                          title="Remover"
                           onClick={() => confirmaRemover(livro.id)}
                         >
                           <Icon name="trash" />
-                        </Button>{" "}
+                        </Button>
                         &nbsp;
                         <Button
                           inverted
                           circular
                           color="blue"
-                          title="Ver detalhes"
                           icon
+                          title="Detalhes"
                           onClick={() => abrirModal(livro)}
                         >
                           <Icon name="eye" />
-                        </Button>{" "}
+                        </Button>
                         &nbsp;
                         <Button
                           inverted
                           circular
                           color="violet"
-                          title="Download do PDF"
                           icon
+                          title="Download PDF"
                           onClick={() => baixarPdf(livro)}
                         >
                           <Icon name="download" />
@@ -248,56 +250,31 @@ export default function ListLivro() {
           </div>
 
           {/* Modal de confirmação de remoção */}
-          <Modal
-            basic
-            onClose={() => setOpenModal(false)}
-            onOpen={() => setOpenModal(true)}
-            open={openModal}
-          >
+          <Modal basic onClose={() => setOpenModal(false)} open={openModal}>
             <Header icon>
               <Icon name="trash" />
-              <div style={{ marginTop: "5%" }}>
-                Tem certeza que deseja remover esse registro?
-              </div>
+              Tem certeza que deseja remover esse registro?
             </Header>
             <Modal.Actions>
-              <Button
-                basic
-                color="red"
-                inverted
-                onClick={() => setOpenModal(false)}
-              >
+              <Button basic color="red" inverted onClick={() => setOpenModal(false)}>
                 <Icon name="remove" /> Não
               </Button>
-              <Button color="green" inverted onClick={() => remover()}>
+              <Button color="green" inverted onClick={remover}>
                 <Icon name="checkmark" /> Sim
               </Button>
             </Modal.Actions>
           </Modal>
 
           {/* Modal de detalhes */}
-          <Modal
-            onClose={() => setModalAberto(false)}
-            open={modalAberto}
-            size="small"
-          >
+          <Modal onClose={() => setModalAberto(false)} open={modalAberto} size="small">
             <Modal.Header>Detalhes do Livro</Modal.Header>
             <Modal.Content>
               {entregadorSelecionado && (
                 <div>
-                  <p>
-                    <strong>Título:</strong> {entregadorSelecionado.titulo}
-                  </p>
-                  <p>
-                    <strong>Autor:</strong>{" "}
-                    {entregadorSelecionado.nomeAutor || entregadorSelecionado.autor}
-                  </p>
-                  <p>
-                    <strong>Gênero:</strong> {entregadorSelecionado.genero}
-                  </p>
-                  <p>
-                    <strong>ISBN:</strong> {entregadorSelecionado.isbn}
-                  </p>
+                  <p><strong>Título:</strong> {entregadorSelecionado.titulo}</p>
+                  <p><strong>Autor:</strong> {entregadorSelecionado.nomeAutor || entregadorSelecionado.autor}</p>
+                  <p><strong>Gênero:</strong> {entregadorSelecionado.genero}</p>
+                  <p><strong>ISBN:</strong> {entregadorSelecionado.isbn}</p>
                 </div>
               )}
             </Modal.Content>
@@ -309,7 +286,6 @@ export default function ListLivro() {
           </Modal>
         </Container>
       </div>
-
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );

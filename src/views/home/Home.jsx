@@ -1,11 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { Container, Menu, Card, Image, Message, Loader, Dimmer, Icon, } from "semantic-ui-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  Button,
+  Card,
+  Container,
+  Dimmer,
+  Icon,
+  Image,
+  Loader,
+  Menu,
+  Message,
+} from "semantic-ui-react";
 
 import capaDomCasmurro from "../../assets/livro1.jpeg";
 import capaOAlienista from "../../assets/livro2.jpeg";
 import MenuSistema from "../../MenuSistema";
 
-// Seus livros default (só Romance por enquanto)
+// Livros fallback
 const livrosDefault = [
   {
     id: 1,
@@ -14,6 +25,7 @@ const livrosDefault = [
     genero: "Romance",
     isbn: "978-85-359-0277-7",
     urlImagem: capaDomCasmurro,
+    urlPdf: "https://example.com/dowload/dom-casmurro.pdf",
   },
   {
     id: 2,
@@ -22,10 +34,11 @@ const livrosDefault = [
     genero: "Romance",
     isbn: "978-85-359-0212-8",
     urlImagem: capaOAlienista,
+    urlPdf: "https://example.com/dowload/o-alienista.pdf",
   },
 ];
 
-// Lista completa de gêneros default (fallback)
+// Gêneros padrão (fallback)
 const generosDefaultFallback = [
   "FICCAO",
   "ROMANCE",
@@ -39,55 +52,72 @@ const generosDefaultFallback = [
 
 export default function Home() {
   const [filtro, setFiltro] = useState("TODOS");
-  // Inicializa generosEnum com a lista fallback
   const [generosEnum, setGenerosEnum] = useState(generosDefaultFallback);
-  const [loadingGeneros, setLoadingGeneros] = useState(true);
-  // O estado errorGeneros ainda existe, mas não será exibido na UI para o usuário final
-  const [errorGeneros, setErrorGeneros] = useState(null);
+  const [livros, setLivros] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // livros filtrados segundo o filtro
-  const livrosFiltrados =
-    filtro === "TODOS"
-      ? livrosDefault
-      : livrosDefault.filter(
-          (livro) => livro.genero.toUpperCase() === filtro.toUpperCase()
-        );
-
+  // Carrega gêneros da API
   useEffect(() => {
     const fetchGeneros = async () => {
       try {
-        setLoadingGeneros(true);
-        setErrorGeneros(null); // Limpa erros anteriores, caso haja algum erro na tentativa anterior
-
-        const response = await fetch('http://localhost:8080/api/genero'); // Seu endpoint da API
-        if (!response.ok) {
-          throw new Error(`Erro HTTP! status: ${response.status}`);
+        const response = await fetch("http://localhost:8080/api/genero");
+        if (response.ok) {
+          const data = await response.json();
+          setGenerosEnum(data);
         }
-        const data = await response.json();
-        // Se a API retornar dados, atualize o estado com eles
-        setGenerosEnum(data);
       } catch (error) {
-        console.error("Erro ao buscar gêneros (usando fallback):", error);
-        // Apenas registra o erro no console, mas não define uma mensagem para a UI
-        setErrorGeneros(error); // Mantém o erro no estado para depuração interna se necessário
-      } finally {
-        setLoadingGeneros(false);
+        console.error("Erro ao buscar gêneros, usando fallback", error);
       }
     };
 
     fetchGeneros();
-  }, []); // Roda apenas uma vez na montagem
+  }, []);
+
+  // Carrega livros da API ou fallback
+  useEffect(() => {
+    const fetchLivros = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/livro");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.length > 0) {
+            setLivros(data);
+          } else {
+            setLivros(livrosDefault);
+          }
+        } else {
+          setLivros(livrosDefault);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar livros, usando fallback", error);
+        setLivros(livrosDefault);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLivros();
+  }, []);
+
+  const livrosFiltrados =
+    filtro === "TODOS"
+      ? livros
+      : livros.filter(
+          (livro) =>
+            livro.genero &&
+            livro.genero.toUpperCase() === filtro.toUpperCase()
+        );
 
   return (
     <>
       <MenuSistema tela={"home"} />
       <Container style={{ marginTop: "2em" }}>
-        <h2 style = {{textAlign:"left"}}>
-            <span style={{ color: "black"}}>
-              Livros &nbsp;
-              <Icon name="angle double right" size="small" />
-            </span>
-          </h2>
+        <h2 style={{ textAlign: "left" }}>
+          <span style={{ color: "black" }}>
+            Livros &nbsp;
+            <Icon name="angle double right" size="small" />
+          </span>
+        </h2>
 
         <Menu pointing secondary>
           <Menu.Item
@@ -95,28 +125,24 @@ export default function Home() {
             active={filtro === "TODOS"}
             onClick={() => setFiltro("TODOS")}
           />
-          {/* Mostra loader apenas se ainda estiver carregando */}
-          {loadingGeneros ? (
-            <Dimmer active inverted>
-              <Loader inverted>Carregando Gêneros...</Loader>
-            </Dimmer>
-          ) : (
-            // Sempre mapeia generosEnum, que será o da API ou o fallback
-            generosEnum.map((genero) => (
-              <Menu.Item
-                key={genero}
-                name={genero}
-                active={filtro === genero}
-                onClick={() => setFiltro(genero)}
-                text={genero.charAt(0) + genero.slice(1).toLowerCase()}
-              >
-                {genero.charAt(0) + genero.slice(1).toLowerCase()}
-              </Menu.Item>
-            ))
-          )}
+          {generosEnum.map((genero) => (
+            <Menu.Item
+              key={genero}
+              name={genero}
+              active={filtro === genero}
+              onClick={() => setFiltro(genero)}
+              text={genero.charAt(0) + genero.slice(1).toLowerCase()}
+            >
+              {genero.charAt(0) + genero.slice(1).toLowerCase()}
+            </Menu.Item>
+          ))}
         </Menu>
 
-        {livrosFiltrados.length === 0 ? (
+        {loading ? (
+          <Dimmer active inverted>
+            <Loader>Carregando livros...</Loader>
+          </Dimmer>
+        ) : livrosFiltrados.length === 0 ? (
           <Message info>
             Nenhum livro encontrado para a categoria{" "}
             <strong>
@@ -135,11 +161,38 @@ export default function Home() {
                   alt={`Capa do livro ${livro.titulo}`}
                   style={{ height: "220px", objectFit: "cover" }}
                 />
+                <Card.Content textAlign="center">
+                  <Card.Header style={{ marginTop: "0.5em" }}>
+                    {livro.titulo}
+                  </Card.Header>
+                </Card.Content>
                 <Card.Content>
-                  <Card.Header>{livro.titulo}</Card.Header>
                   <Card.Meta>{livro.nomeAutor}</Card.Meta>
                   <Card.Description>Gênero: {livro.genero}</Card.Description>
                   <Card.Description>ISBN: {livro.isbn}</Card.Description>
+                </Card.Content>
+                <Card.Content extra>
+                  <Button
+                    as={Link}
+                    to={`/livro/${livro.id}`}
+                    primary
+                    fluid
+                    icon="book"
+                    content="Ver Detalhes"
+                    style={{ marginBottom: "0.5em" }}
+                  />
+                  {livro.urlPdf && (
+                    <Button
+                      as="a"
+                      href={livro.urlPdf}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      color="green"
+                      fluid
+                      icon="download"
+                      content="Baixar PDF"
+                    />
+                  )}
                 </Card.Content>
               </Card>
             ))}

@@ -1,8 +1,19 @@
-import { Link } from "react-router-dom";
-import { Dropdown, Menu } from "semantic-ui-react";
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Dropdown, Input, Menu } from "semantic-ui-react";
 import "./MenuSistema.css";
 
 export default function MenuSistema(props) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [busca, setBusca] = useState("");
+
+  const handleBusca = (e) => {
+    if (e.key === "Enter") {
+      navigate(`/list-livro?busca=${encodeURIComponent(busca)}`);
+    }
+  };
+
   return (
     <div className="menu-container">
       <Menu inverted className="menu-custom">
@@ -19,30 +30,30 @@ export default function MenuSistema(props) {
               as={Link}
               to="/form-livro"
               text="Cadastro"
-              active={props.tela === "livro" && window.location.pathname.includes("form")}
+              active={props.tela === "livro" && location.pathname.includes("form")}
             />
             <Dropdown.Item
               as={Link}
               to="/list-livro"
               text="Ver Todos"
-              active={props.tela === "livro" && window.location.pathname.includes("list")}
+              active={props.tela === "livro" && location.pathname.includes("list")}
             />
           </Dropdown.Menu>
         </Dropdown>
 
-      <Dropdown item text="Usuario">
+        <Dropdown item text="Usuario">
           <Dropdown.Menu>
             <Dropdown.Item
               as={Link}
               to="/form-usuario"
               text="Cadastro"
-              active={props.tela === "usuario" && window.location.pathname.includes("form")}
+              active={props.tela === "usuario" && location.pathname.includes("form")}
             />
             <Dropdown.Item
               as={Link}
               to="/list-usuario"
               text="Ver Todos"
-              active={props.tela === "usuario" && window.location.pathname.includes("list")}
+              active={props.tela === "usuario" && location.pathname.includes("list")}
             />
           </Dropdown.Menu>
         </Dropdown>
@@ -54,6 +65,15 @@ export default function MenuSistema(props) {
           to="/sobre"
         />
 
+        <Menu.Item>
+          <Input
+            icon="search"
+            placeholder="Buscar livro..."
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            onKeyDown={handleBusca}
+          />
+        </Menu.Item>
 
         <Menu.Menu position="right">
           <Menu.Item>

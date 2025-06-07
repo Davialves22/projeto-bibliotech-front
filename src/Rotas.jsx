@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 
 import Home from "./views/home/Home";
+import LivroDetalhes from "./views/livro/DetalhesLivro";
 import FormLivro from "./views/livro/FormLivro";
 import ListLivro from "./views/livro/ListLivro";
 import Sobre from "./views/sobre/Sobre";
@@ -16,6 +17,7 @@ function Rotas() {
         <Route path="form-usuario" element={<FormUsuario />} />
 
         <Route path="sobre" element={<Sobre />} />
+        <Route path="livro/:id" element={<LivroDetalhes />} />
       </Routes>
     </>
   );
