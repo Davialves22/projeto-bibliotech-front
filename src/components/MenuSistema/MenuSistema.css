@@ -31,15 +31,49 @@
   padding: 0 1rem;
 }
 
-/* -------- RESPONSIVO -------- */
+/* Menu botão e dropdown para mobile */
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+}
 
+.mobile-dropdown {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  padding: 0.5em 1em;
+  background-color: var(--color-800, #2c2c2c);
+}
+
+.mobile-dropdown .item {
+  font-size: 1em;
+  padding: 0.5em 0.75em;
+  color: white !important;
+}
+
+.mobile-dropdown .ui.dropdown .menu {
+  background: var(--color-100, #333);
+}
+
+.mobile-dropdown .ui.dropdown .item {
+  color: white !important;
+}
+
+/* Responsivo */
 @media (max-width: 768px) {
-  /* Esconde todo o menu no mobile */
   .desktop-menu {
     display: none !important;
   }
 
-  /* Mostra só a barra de busca */
+  .mobile-menu {
+    display: flex !important;
+  }
+
+  .mobile-dropdown {
+    display: flex !important;
+  }
+
   .mobile-only-search {
     display: block !important;
     width: 100%;
