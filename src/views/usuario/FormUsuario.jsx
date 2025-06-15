@@ -3,7 +3,7 @@ import InputMask from "comigo-tech-react-input-mask";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button, Container, Divider, Form, Icon } from "semantic-ui-react";
-import MenuSistema from "../../MenuSistema";
+import MenuSistema from "../../components/MenuSistema/MenuSistema";
 
 import { ToastContainer, toast } from "react-toastify"; // import toast
 import 'react-toastify/dist/ReactToastify.css'; // css do toastify

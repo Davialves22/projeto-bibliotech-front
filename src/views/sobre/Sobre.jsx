@@ -6,8 +6,8 @@ import {
   Icon,
   Segment,
 } from "semantic-ui-react";
-import MenuSistema from "../../MenuSistema";
 import CarouselFotos from "../../components/CarouselFotos";
+import MenuSistema from "../../components/MenuSistema/MenuSistema";
 
 export default function Sobre() {
   return (

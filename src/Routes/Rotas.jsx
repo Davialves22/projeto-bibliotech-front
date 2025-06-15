@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router-dom";
 
-import Home from "./views/home/Home";
-import LivroDetalhes from "./views/livro/DetalhesLivro";
-import FormLivro from "./views/livro/FormLivro";
-import ListLivro from "./views/livro/ListLivro";
-import Sobre from "./views/sobre/Sobre";
-import FormUsuario from "./views/usuario/FormUsuario";
+import Home from "../views/home/Home";
+import LivroDetalhes from "../views/livro/DetalhesLivro";
+import FormLivro from "../views/livro/FormLivro";
+import ListLivro from "../views/livro/ListLivro";
+import Sobre from "../views/sobre/Sobre";
+import FormUsuario from "../views/usuario/FormUsuario";
 
 function Rotas() {
   return (

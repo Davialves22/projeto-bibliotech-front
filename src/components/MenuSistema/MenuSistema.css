@@ -1,0 +1,51 @@
+.menu-container {
+  padding: 5px;
+}
+
+/* Estilo geral */
+.menu-custom {
+  background-color: var(--color-900, #1b1c1d) !important;
+  color: white;
+}
+
+.menu-custom .item {
+  color: white !important;
+}
+
+/* Menu desktop com itens lado a lado */
+.desktop-menu {
+  display: flex !important;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: nowrap;
+}
+
+/* Oculta busca mobile por padrão */
+.mobile-only-search {
+  display: none;
+}
+
+/* Input de busca mobile */
+.mobile-search-input {
+  width: 100%;
+  padding: 0 1rem;
+}
+
+/* -------- RESPONSIVO -------- */
+
+@media (max-width: 768px) {
+  /* Esconde todo o menu no mobile */
+  .desktop-menu {
+    display: none !important;
+  }
+
+  /* Mostra só a barra de busca */
+  .mobile-only-search {
+    display: block !important;
+    width: 100%;
+  }
+
+  .menu-custom .mobile-search-input {
+    width: 100%;
+  }
+}

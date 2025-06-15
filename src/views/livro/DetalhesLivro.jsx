@@ -2,14 +2,14 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Loader, Message } from "semantic-ui-react";
-import MenuSistema from "../../MenuSistema";
+import MenuSistema from "../../components/MenuSistema/MenuSistema";
 
 import {
-    ContainerStyled,
-    HeaderStyled,
-    ImageStyled,
-    InfoWrapper,
-    SegmentStyled,
+  ContainerStyled,
+  HeaderStyled,
+  ImageStyled,
+  InfoWrapper,
+  SegmentStyled,
 } from "./css/DetalhesLivro";
 
 export default function LivroDetalhes() {

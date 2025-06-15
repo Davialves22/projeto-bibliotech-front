@@ -9,7 +9,7 @@ import {
   Form,
   Icon,
 } from "semantic-ui-react";
-import MenuSistema from "../../MenuSistema";
+import MenuSistema from "../../components/MenuSistema/MenuSistema";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

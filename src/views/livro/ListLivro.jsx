@@ -10,9 +10,9 @@ import {
   Modal,
   Table,
 } from "semantic-ui-react";
-import MenuSistema from "../../MenuSistema";
 import capaDomCasmurro from "../../assets/livro1.jpeg";
 import capaOAlienista from "../../assets/livro2.jpeg";
+import MenuSistema from "../../components/MenuSistema/MenuSistema";
 
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

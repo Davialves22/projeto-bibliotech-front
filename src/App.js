@@ -1,8 +1,8 @@
-
 import { Segment } from 'semantic-ui-react';
 import './App.css';
-import Rotas from './Rotas';
+import Rotas from './Routes/Rotas';
 import GlobalStyles from './styles/GlobalStyles';
+
 
 function App() {
 
@@ -13,7 +13,7 @@ function App() {
       <GlobalStyles/>
       <Rotas />
 
-      <div style={{ marginTop: '6%' }}>
+      <div style={{ marginTop: '10%' }}>
         <Segment vertical color='grey' size='tiny' textAlign='center'>
           &copy; 2025 - Projeto Bibliotech - IFPE Jaboatão dos Guararapes.
         </Segment>

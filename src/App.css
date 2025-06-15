@@ -1,7 +1,19 @@
-*{
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-font-family: 'Roboto' sans-serif ;
-outline: none;
+:root {
+  --color-900: #03045E;
+  --color-800: #023E8A;
+  --color-700: #0077B6;
+  --color-600: #0096C7;
+  --color-500: #00B4D8;
+  --color-400: #48CAE4;
+  --color-300: #90E0EF;
+  --color-200: #ADE8F4;
+  --color-100: #CAF0F8;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+  outline: none;
 }
