@@ -2,13 +2,7 @@ import axios from "axios";
 import InputMask from "comigo-tech-react-input-mask";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import {
-  Button,
-  Container,
-  Divider,
-  Form,
-  Icon,
-} from "semantic-ui-react";
+import { Button, Container, Divider, Form, Icon } from "semantic-ui-react";
 import MenuSistema from "../../components/MenuSistema/MenuSistema";
 
 import { ToastContainer, toast } from "react-toastify";
@@ -44,8 +38,8 @@ export default function FormLivro() {
   useEffect(() => {
     if (state?.id) {
       axios
-        .get(`http://localhost:8080/api/livro/${state.id}`)
-        .then((response) => {
+        .get(`http://localhost:8080/api/livro/v1/${state.id}`)
+        .then1((response) => {
           const data = response.data;
           setIdLivro(data.id);
           setTitulo(data.titulo);
@@ -86,12 +80,11 @@ export default function FormLivro() {
 
     const request = idLivro
       ? axios.put(
-          `http://localhost:8080/api/livro/${idLivro}`,
+          `http://localhost:8080/api/livro/v1/${idLivro}`,
           formData,
           config
         )
-      : axios.post("http://localhost:8080/api/livro", formData, config);
-
+      : axios.post("http://localhost:8080/api/livro/v1", formData, config);
     request
       .then(() => {
         console.log("Livro salvo com sucesso!");
@@ -230,7 +223,13 @@ export default function FormLivro() {
 
           <div style={{ marginTop: "4%" }}>
             <Link to={"/list-livro"}>
-              <Button inverted circular icon labelPosition="left" color="orange">
+              <Button
+                inverted
+                circular
+                icon
+                labelPosition="left"
+                color="orange"
+              >
                 <Icon name="reply" /> Voltar
               </Button>
             </Link>
