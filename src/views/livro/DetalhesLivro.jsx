@@ -45,7 +45,7 @@ export default function LivroDetalhes() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/api/livro/${id}`)
+      .get(`http://localhost:8080/api/livro/v1/${id}`)
       .then((response) => setLivro(response.data))
       .catch(() => {
         const livroDefault = livrosDefault[id];
