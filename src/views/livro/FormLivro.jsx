@@ -37,9 +37,11 @@ export default function FormLivro() {
 
   useEffect(() => {
     if (state?.id) {
+      console.log("Carregando dados do livro com ID:", state.id);
       axios
         .get(`http://localhost:8080/api/livro/v1/${state.id}`)
-        .then1((response) => {
+        .then((response) => {
+          console.log("Dados recebidos do backend:", response.data);
           const data = response.data;
           setIdLivro(data.id);
           setTitulo(data.titulo);
@@ -53,6 +55,13 @@ export default function FormLivro() {
         })
         .catch((error) => {
           console.error("Erro ao carregar livro:", error);
+          if (error.response) {
+            console.error("Erro com resposta do servidor:", error.response.data);
+          } else if (error.request) {
+            console.error("Erro de requisição:", error.request);
+          } else {
+            console.error("Erro geral:", error.message);
+          }
           toast.error("Erro ao carregar dados do livro.");
         });
     }
@@ -72,26 +81,47 @@ export default function FormLivro() {
     if (imagem_url) formData.append("imagemUrl", imagem_url);
     if (pdf) formData.append("pdf", pdf);
 
+    console.log("📤 Enviando os seguintes dados:");
+    for (let pair of formData.entries()) {
+      console.log(`→ ${pair[0]}:`, pair[1]);
+    }
+
     const config = {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     };
 
+    const url = idLivro
+      ? `http://localhost:8080/api/livro/v1/${idLivro}`
+      : "http://localhost:8080/api/livro/v1";
+
+    console.log(`🔗 Enviando ${idLivro ? "PUT" : "POST"} para`, url);
+
     const request = idLivro
-      ? axios.put(
-          `http://localhost:8080/api/livro/v1/${idLivro}`,
-          formData,
-          config
-        )
-      : axios.post("http://localhost:8080/api/livro/v1", formData, config);
+      ? axios.put(url, formData, config)
+      : axios.post(url, formData, config);
+
     request
-      .then(() => {
-        console.log("Livro salvo com sucesso!");
+      .then((response) => {
+        console.log("✅ Livro salvo com sucesso!", response.data);
         toast.success("Livro salvo com sucesso!");
       })
       .catch((error) => {
-        console.error("Erro ao salvar o Livro:", error);
+        console.error("❌ Erro ao salvar o Livro:", error);
+
+        if (error.response) {
+          console.error(
+            "⚠️ Resposta com erro do servidor:",
+            error.response.status,
+            error.response.data
+          );
+        } else if (error.request) {
+          console.error("⚠️ Sem resposta do servidor. Requisição enviada:", error.request);
+        } else {
+          console.error("⚠️ Erro de configuração ao enviar requisição:", error.message);
+        }
+
         toast.error("Erro ao salvar o livro. Verifique os dados.");
       });
   }
@@ -223,13 +253,7 @@ export default function FormLivro() {
 
           <div style={{ marginTop: "4%" }}>
             <Link to={"/list-livro"}>
-              <Button
-                inverted
-                circular
-                icon
-                labelPosition="left"
-                color="orange"
-              >
+              <Button inverted circular icon labelPosition="left" color="orange">
                 <Icon name="reply" /> Voltar
               </Button>
             </Link>
