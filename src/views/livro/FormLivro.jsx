@@ -1,10 +1,10 @@
 import axios from "axios";
-import InputMask from "comigo-tech-react-input-mask";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button, Container, Divider, Form, Icon } from "semantic-ui-react";
 import MenuSistema from "../../components/MenuSistema/MenuSistema";
 
+import InputMask from "comigo-tech-react-input-mask/lib/react-input-mask.development";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -16,12 +16,10 @@ export default function FormLivro() {
   const [nomeAutor, setNomeAutor] = useState("");
   const [dataPublicacao, setDatapublicacao] = useState("");
   const [genero, setGenero] = useState("");
-  const [preco, setPreco] = useState("");
 
   const [isbn, setIsbn] = useState("");
   const [nacionalidadeAutor, setNacionalidadeAutor] = useState("");
   const [imagem, setImagem] = useState(null);
-  const [imagem_url, setImagem_url] = useState("");
   const [pdf, setPdf] = useState(null);
 
   const listaGeneros = [
@@ -48,15 +46,16 @@ export default function FormLivro() {
           setNomeAutor(data.nomeAutor);
           setDatapublicacao(formatarData(data.dataPublicacao));
           setGenero(data.genero);
-          setPreco(String(data.preco));
           setIsbn(data.isbn);
           setNacionalidadeAutor(data.nacionalidadeAutor);
-          setImagem_url(data.imagemUrl);
         })
         .catch((error) => {
           console.error("Erro ao carregar livro:", error);
           if (error.response) {
-            console.error("Erro com resposta do servidor:", error.response.data);
+            console.error(
+              "Erro com resposta do servidor:",
+              error.response.data
+            );
           } else if (error.request) {
             console.error("Erro de requisição:", error.request);
           } else {
@@ -74,11 +73,9 @@ export default function FormLivro() {
     formData.append("nomeAutor", nomeAutor);
     formData.append("dataPublicacao", converterDataParaISO(dataPublicacao));
     formData.append("genero", genero);
-    formData.append("preco", formatarPreco(preco));
     formData.append("isbn", isbn);
     formData.append("nacionalidadeAutor", nacionalidadeAutor);
-    if (imagem) formData.append("imagem", imagem);
-    if (imagem_url) formData.append("imagemUrl", imagem_url);
+    if (imagem) formData.append("imagemCapa", imagem);
     if (pdf) formData.append("pdf", pdf);
 
     console.log("📤 Enviando os seguintes dados:");
@@ -117,19 +114,19 @@ export default function FormLivro() {
             error.response.data
           );
         } else if (error.request) {
-          console.error("⚠️ Sem resposta do servidor. Requisição enviada:", error.request);
+          console.error(
+            "⚠️ Sem resposta do servidor. Requisição enviada:",
+            error.request
+          );
         } else {
-          console.error("⚠️ Erro de configuração ao enviar requisição:", error.message);
+          console.error(
+            "⚠️ Erro de configuração ao enviar requisição:",
+            error.message
+          );
         }
 
         toast.error("Erro ao salvar o livro. Verifique os dados.");
       });
-  }
-
-  function formatarPreco(valor) {
-    if (typeof valor === "number") return valor.toFixed(2);
-    if (typeof valor === "string") return valor.replace(",", ".");
-    return "0.00";
   }
 
   function converterDataParaISO(data) {
@@ -177,6 +174,18 @@ export default function FormLivro() {
                 value={nomeAutor}
                 onChange={(e) => setNomeAutor(e.target.value)}
               />
+            </Form.Group>
+
+            <Form.Group widths="equal">
+              <Form.Select
+                fluid
+                label="Gênero"
+                options={listaGeneros}
+                placeholder="Selecione o gênero"
+                value={genero}
+                onChange={(e, { value }) => setGenero(value)}
+              />
+
               <Form.Input fluid label="Data de Publicação" width={6}>
                 <InputMask
                   mask="99/99/9999"
@@ -186,23 +195,6 @@ export default function FormLivro() {
                 />
               </Form.Input>
             </Form.Group>
-
-            <Form.Select
-              fluid
-              label="Gênero"
-              options={listaGeneros}
-              placeholder="Selecione o gênero"
-              value={genero}
-              onChange={(e, { value }) => setGenero(value)}
-            />
-
-            <Form.Input
-              fluid
-              label="Preço"
-              maxLength="100"
-              value={preco}
-              onChange={(e) => setPreco(e.target.value)}
-            />
 
             <Form.Group widths="equal">
               <Form.Input
@@ -222,15 +214,8 @@ export default function FormLivro() {
             </Form.Group>
 
             <Form.Group widths="equal">
-              <Form.Input
-                fluid
-                label="Imagem URL"
-                placeholder="Cole o link da imagem aqui"
-                value={imagem_url}
-                onChange={(e) => setImagem_url(e.target.value)}
-              />
               <Form.Field>
-                <label>Upload de Imagem</label>
+                <label>Capa do Livro</label>
                 <input
                   type="file"
                   accept="image/*"
@@ -238,7 +223,7 @@ export default function FormLivro() {
                 />
               </Form.Field>
               <Form.Field>
-                <label>Upload de PDF</label>
+                <label>PDF do Livro</label>
                 <input
                   type="file"
                   accept="application/pdf"
@@ -253,7 +238,13 @@ export default function FormLivro() {
 
           <div style={{ marginTop: "4%" }}>
             <Link to={"/list-livro"}>
-              <Button inverted circular icon labelPosition="left" color="orange">
+              <Button
+                inverted
+                circular
+                icon
+                labelPosition="left"
+                color="orange"
+              >
                 <Icon name="reply" /> Voltar
               </Button>
             </Link>

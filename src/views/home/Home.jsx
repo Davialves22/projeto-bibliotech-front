@@ -65,7 +65,7 @@ export default function Home() {
   useEffect(() => {
     const fetchLivros = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/livro");
+        const response = await fetch("http://localhost:8080/api/livro/v1");
         const data = await response.ok ? await response.json() : livrosDefault;
         setLivros(data.length ? data : livrosDefault);
       } catch {

@@ -30,7 +30,10 @@ export const Menu = styled.div`
   }
 `;
 
-export const Item = styled.div`
+// Aqui o filtro impede que a prop 'active' seja repassada para o div DOM e cause warning
+export const Item = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "active"
+})`
   flex: 0 0 auto;
   margin: 0 0.4em;
   padding: 0.5em 1em;

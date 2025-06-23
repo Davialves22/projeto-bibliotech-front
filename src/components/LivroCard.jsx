@@ -8,25 +8,35 @@ import {
 } from "../views/home/Home.styles";
 
 export default function LivroCard({ livro }) {
+  console.log("📘 Livro recebido no LivroCard:", livro);
+  const imageSrc = `http://localhost:8080/api/livro/v1/imagem/${livro.id}`;
+  console.log("🖼️ URL da imagem:", imageSrc);
+
   return (
     <Card>
       <Image
-        src={livro.urlImagem}
+        src={imageSrc}
         wrapped
         ui={false}
         alt={`Capa do livro ${livro.titulo}`}
+        onError={(e) => {
+          console.error("❌ Erro ao carregar imagem:", e);
+        }}
       />
       <CardContentCenter>
         <SemanticCard.Header style={{ marginTop: "0.5em" }}>
           {livro.titulo}
         </SemanticCard.Header>
       </CardContentCenter>
+
+      {/* 👇 AQUI ESTAVA O ERRO, agora corrigido */}
       <SemanticCard.Content>
         <SemanticCard.Meta>{livro.nomeAutor}</SemanticCard.Meta>
         <SemanticCard.Description>
           Gênero: {livro.genero}
         </SemanticCard.Description>
       </SemanticCard.Content>
+
       <CardContentExtra>
         <Button
           as={Link}
@@ -35,7 +45,7 @@ export default function LivroCard({ livro }) {
           fluid
           icon="book"
           content="Ver Detalhes"
-          style={{ marginBottom: "0.5em", fontSize: "0.75rem" }} // Exemplo: 0.75rem, você pode ajustar
+          style={{ marginBottom: "0.5em", fontSize: "0.75rem" }}
         />
         {livro.urlPdf && (
           <Button
@@ -47,7 +57,7 @@ export default function LivroCard({ livro }) {
             fluid
             icon="download"
             content="Baixar PDF"
-            style={{ fontSize: "0.75rem" }} // Mesma redução aqui
+            style={{ fontSize: "0.75rem" }}
           />
         )}
       </CardContentExtra>
