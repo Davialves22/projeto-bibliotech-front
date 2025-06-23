@@ -32,7 +32,6 @@ export default function LivroCard({ livro }) {
         </SemanticCard.Header>
       </CardContentCenter>
 
-      {/* 👇 AQUI ESTAVA O ERRO, agora corrigido */}
       <SemanticCard.Content>
         <SemanticCard.Meta>{livro.nomeAutor}</SemanticCard.Meta>
         <SemanticCard.Description>
@@ -54,8 +53,7 @@ export default function LivroCard({ livro }) {
           <Button
             as="a"
             href={urlPdf}
-            target="_blank"
-            rel="noopener noreferrer"
+            download
             color="green"
             fluid
             icon="download"
