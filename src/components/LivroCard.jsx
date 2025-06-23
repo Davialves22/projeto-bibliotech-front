@@ -12,6 +12,9 @@ export default function LivroCard({ livro }) {
   const imageSrc = `http://localhost:8080/api/livro/v1/imagem/${livro.id}`;
   console.log("🖼️ URL da imagem:", imageSrc);
 
+  const urlPdf = `http://localhost:8080/api/livro/v1/pdf/${livro.id}`;
+  console.log("📄 URL do PDF:", urlPdf);
+
   return (
     <Card>
       <Image
@@ -47,10 +50,10 @@ export default function LivroCard({ livro }) {
           content="Ver Detalhes"
           style={{ marginBottom: "0.5em", fontSize: "0.75rem" }}
         />
-        {livro.urlPdf && (
+        {urlPdf && (
           <Button
             as="a"
-            href={livro.urlPdf}
+            href={urlPdf}
             target="_blank"
             rel="noopener noreferrer"
             color="green"
