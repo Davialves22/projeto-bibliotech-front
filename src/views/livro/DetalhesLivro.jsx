@@ -12,14 +12,20 @@ import {
   SegmentStyled,
 } from "./css/DetalhesLivro";
 
+// Import das imagens mock
+import capaDomCasmurro from "../../assets/livro1.jpeg";
+import capaOAlienista from "../../assets/livro2.jpeg";
+
 export default function LivroDetalhes() {
   const { id } = useParams();
   const [livro, setLivro] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const livrosDefault = {
     1: {
+      id: 1,
       titulo: "Dom Casmurro",
       nomeAutor: "Machado de Assis",
       genero: "Romance",
@@ -27,10 +33,11 @@ export default function LivroDetalhes() {
       dataNascimento: "01/01/1899",
       preco: "0.00",
       nacionalidadeAutor: "Brasileiro",
-      urlImagem: require("../../assets/livro1.jpeg"),
+      urlImagem: capaDomCasmurro,
       urlPdf: "https://www.dominiopublico.gov.br/download/texto/bv000110.pdf",
     },
     2: {
+      id: 2,
       titulo: "O Alienista",
       nomeAutor: "Machado de Assis",
       genero: "Conto",
@@ -38,11 +45,12 @@ export default function LivroDetalhes() {
       dataNascimento: "01/01/1882",
       preco: "0.00",
       nacionalidadeAutor: "Brasileiro",
-      urlImagem: require("../../assets/livro2.jpeg"),
+      urlImagem: capaOAlienista,
       urlPdf: "https://www.dominiopublico.gov.br/download/texto/bv000122.pdf",
     },
   };
 
+  // Busca dados do livro
   useEffect(() => {
     axios
       .get(`http://localhost:8080/api/livro/v1/${id}`)
@@ -55,37 +63,47 @@ export default function LivroDetalhes() {
       .finally(() => setCarregando(false));
   }, [id]);
 
-  const baixarPdfBase64 = () => {
-    if (!livro.pdf) return;
-    const byteCharacters = atob(livro.pdf);
-    const byteArrays = [];
+  // Busca PDF em arraybuffer e cria URL blob para download
+  useEffect(() => {
+    if (!livro || livro.pdfBlobUrl || !livro.id) return;
 
-    for (let i = 0; i < byteCharacters.length; i += 512) {
-      const slice = byteCharacters.slice(i, i + 512);
-      const byteNumbers = new Array(slice.length);
-      for (let j = 0; j < slice.length; j++) {
-        byteNumbers[j] = slice.charCodeAt(j);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      byteArrays.push(byteArray);
-    }
+    axios
+      .get(`http://localhost:8080/api/livro/v1/pdf/${livro.id}`, {
+        responseType: "arraybuffer",
+      })
+      .then((res) => {
+        const blob = new Blob([res.data], { type: "application/pdf" });
+        const url = URL.createObjectURL(blob);
 
-    const blob = new Blob(byteArrays, { type: "application/pdf" });
-    const url = URL.createObjectURL(blob);
+        setLivro((prev) => ({
+          ...prev,
+          pdfBlobUrl: url,
+        }));
+      })
+      .catch(() => {
+        console.warn("⚠️ PDF não disponível para este livro.");
+      });
+  }, [livro]);
+
+  const baixarPdf = () => {
+    if (!livro?.pdfBlobUrl) return;
 
     const link = document.createElement("a");
-    link.href = url;
+    link.href = livro.pdfBlobUrl;
     link.download = `${livro.titulo}.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(url);
   };
 
   if (carregando)
     return <Loader active inline="centered" content="Carregando livro..." />;
   if (erro || !livro)
     return <Message negative content="Livro não encontrado." />;
+
+  const imageSrc = imageError
+    ? livro.urlImagem
+    : `http://localhost:8080/api/livro/v1/imagem/${livro.id}`;
 
   return (
     <>
@@ -94,14 +112,14 @@ export default function LivroDetalhes() {
         <HeaderStyled>{livro.titulo}</HeaderStyled>
         <SegmentStyled>
           <ImageStyled
-            src={
-              livro.urlImagem
-                ? livro.urlImagem
-                : livro.imagem
-                ? `data:image/jpeg;base64,${livro.imagem}`
-                : "https://react.semantic-ui.com/images/wireframe/image.png"
-            }
+            src={imageSrc}
             alt={`Capa do livro ${livro.titulo}`}
+            onError={() => {
+              console.warn(
+                "❌ Erro ao carregar imagem da API. Tentando imagem local..."
+              );
+              setImageError(true);
+            }}
           />
           <InfoWrapper>
             <p>
@@ -114,22 +132,18 @@ export default function LivroDetalhes() {
               <strong>Gênero:</strong> {livro.genero}
             </p>
             <p>
-              <strong>Data de Publicação:</strong> {livro.dataNascimento}
+              <strong>Data de Publicação:</strong> {livro.dataPublicacao}
             </p>
             <p>
               <strong>Nacionalidade do Autor:</strong> {livro.nacionalidadeAutor}
             </p>
-            <p>
-              <strong>Preço:</strong> R$ {Number(livro.preco).toFixed(2)}
-            </p>
 
-            {/* Botão de download */}
-            {livro.pdf ? (
+            {livro.pdfBlobUrl ? (
               <Button
                 color="green"
                 icon="download"
                 content="Baixar Livro (PDF do banco)"
-                onClick={baixarPdfBase64}
+                onClick={baixarPdf}
                 style={{ marginTop: "1em" }}
               />
             ) : livro.urlPdf ? (

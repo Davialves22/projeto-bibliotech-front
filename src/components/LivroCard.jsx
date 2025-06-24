@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Card as SemanticCard } from "semantic-ui-react";
 import {
@@ -8,12 +9,13 @@ import {
 } from "../views/home/Home.styles";
 
 export default function LivroCard({ livro }) {
-  console.log("📘 Livro recebido no LivroCard:", livro);
-  const imageSrc = `http://localhost:8080/api/livro/v1/imagem/${livro.id}`;
-  console.log("🖼️ URL da imagem:", imageSrc);
+  const [imageError, setImageError] = useState(false);
+
+  const imageSrc = imageError
+    ? livro.urlImagem
+    : `http://localhost:8080/api/livro/v1/imagem/${livro.id}`;
 
   const urlPdf = `http://localhost:8080/api/livro/v1/pdf/${livro.id}`;
-  console.log("📄 URL do PDF:", urlPdf);
 
   return (
     <Card>
@@ -23,7 +25,8 @@ export default function LivroCard({ livro }) {
         ui={false}
         alt={`Capa do livro ${livro.titulo}`}
         onError={(e) => {
-          console.error("❌ Erro ao carregar imagem:", e);
+          console.warn("❌ Erro ao carregar imagem da API. Tentando imagem local...");
+          setImageError(true);
         }}
       />
       <CardContentCenter>
