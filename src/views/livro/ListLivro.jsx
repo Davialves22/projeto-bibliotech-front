@@ -62,16 +62,20 @@ export default function ListLivro() {
     ];
 
     axios
-      .get("http://localhost:8080/api/livro")
+      .get("http://localhost:8080/api/livro/v1  ")
       .then((response) => {
-        const livros = Array.isArray(response.data) && response.data.length > 0
-          ? response.data
-          : livrosDefault;
+        const livros =
+          Array.isArray(response.data) && response.data.length > 0
+            ? response.data
+            : livrosDefault;
         setLista(livros);
         setListaOriginal(livros);
       })
       .catch((error) => {
-        console.error("Erro ao carregar lista da API. Usando livros padrão.", error);
+        console.error(
+          "Erro ao carregar lista da API. Usando livros padrão.",
+          error
+        );
         setLista(livrosDefault);
         setListaOriginal(livrosDefault);
       });
@@ -79,11 +83,12 @@ export default function ListLivro() {
 
   function filtrarLivros(termo) {
     const termoLower = termo.toLowerCase();
-    const filtrados = listaOriginal.filter((livro) =>
-      livro.titulo.toLowerCase().includes(termoLower) ||
-      (livro.nomeAutor || livro.autor).toLowerCase().includes(termoLower) ||
-      livro.genero.toLowerCase().includes(termoLower) ||
-      livro.isbn.toLowerCase().includes(termoLower)
+    const filtrados = listaOriginal.filter(
+      (livro) =>
+        livro.titulo.toLowerCase().includes(termoLower) ||
+        (livro.nomeAutor || livro.autor).toLowerCase().includes(termoLower) ||
+        livro.genero.toLowerCase().includes(termoLower) ||
+        livro.isbn.toLowerCase().includes(termoLower)
     );
     setLista(filtrados);
   }
@@ -183,12 +188,15 @@ export default function ListLivro() {
                         <img
                           src={
                             livro.urlImagem ||
-                            `http://localhost:8080/api/livro/imagem/${livro.id}`
+                            `http://localhost:8080/api/livro/v1/imagem/${livro.id}`
                           }
                           alt={`Capa do livro ${livro.titulo}`}
                           style={{ width: "60px", objectFit: "cover" }}
                           onError={(e) => {
-                            if (e.currentTarget.src !== `${window.location.origin}/default.jpg`) {
+                            if (
+                              e.currentTarget.src !==
+                              `${window.location.origin}/default.jpg`
+                            ) {
                               e.currentTarget.src = "/default.jpg";
                             }
                           }}
@@ -199,8 +207,18 @@ export default function ListLivro() {
                       <Table.Cell>{livro.genero}</Table.Cell>
                       <Table.Cell>{livro.isbn}</Table.Cell>
                       <Table.Cell textAlign="center">
-                        <Button inverted circular color="green" icon title="Editar">
-                          <Link to="/form-livro" state={{ id: livro.id }} style={{ color: "green" }}>
+                        <Button
+                          inverted
+                          circular
+                          color="green"
+                          icon
+                          title="Editar"
+                        >
+                          <Link
+                            to="/form-livro"
+                            state={{ id: livro.id }}
+                            style={{ color: "green" }}
+                          >
                             <Icon name="edit" />
                           </Link>
                         </Button>
@@ -242,7 +260,9 @@ export default function ListLivro() {
                   ))
                 ) : (
                   <Table.Row>
-                    <Table.Cell colSpan="6">Nenhum livro encontrado.</Table.Cell>
+                    <Table.Cell colSpan="6">
+                      Nenhum livro encontrado.
+                    </Table.Cell>
                   </Table.Row>
                 )}
               </Table.Body>
@@ -256,7 +276,12 @@ export default function ListLivro() {
               Tem certeza que deseja remover esse registro?
             </Header>
             <Modal.Actions>
-              <Button basic color="red" inverted onClick={() => setOpenModal(false)}>
+              <Button
+                basic
+                color="red"
+                inverted
+                onClick={() => setOpenModal(false)}
+              >
                 <Icon name="remove" /> Não
               </Button>
               <Button color="green" inverted onClick={remover}>
@@ -266,15 +291,29 @@ export default function ListLivro() {
           </Modal>
 
           {/* Modal de detalhes */}
-          <Modal onClose={() => setModalAberto(false)} open={modalAberto} size="small">
+          <Modal
+            onClose={() => setModalAberto(false)}
+            open={modalAberto}
+            size="small"
+          >
             <Modal.Header>Detalhes do Livro</Modal.Header>
             <Modal.Content>
               {entregadorSelecionado && (
                 <div>
-                  <p><strong>Título:</strong> {entregadorSelecionado.titulo}</p>
-                  <p><strong>Autor:</strong> {entregadorSelecionado.nomeAutor || entregadorSelecionado.autor}</p>
-                  <p><strong>Gênero:</strong> {entregadorSelecionado.genero}</p>
-                  <p><strong>ISBN:</strong> {entregadorSelecionado.isbn}</p>
+                  <p>
+                    <strong>Título:</strong> {entregadorSelecionado.titulo}
+                  </p>
+                  <p>
+                    <strong>Autor:</strong>{" "}
+                    {entregadorSelecionado.nomeAutor ||
+                      entregadorSelecionado.autor}
+                  </p>
+                  <p>
+                    <strong>Gênero:</strong> {entregadorSelecionado.genero}
+                  </p>
+                  <p>
+                    <strong>ISBN:</strong> {entregadorSelecionado.isbn}
+                  </p>
                 </div>
               )}
             </Modal.Content>
