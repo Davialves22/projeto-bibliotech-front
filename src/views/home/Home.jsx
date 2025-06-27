@@ -9,6 +9,9 @@ import MenuSistema from "../../components/MenuSistema/MenuSistema";
 
 import capaDomCasmurro from "../../assets/livro1.jpeg";
 import capaOAlienista from "../../assets/livro2.jpeg";
+
+import PDF1 from "../../assets/PDFs/memoriasBras.pdf"
+
 import Footer from "../../components/Footer";
 
 const livrosDefault = [
@@ -19,16 +22,16 @@ const livrosDefault = [
     genero: "Romance",
     isbn: "978-85-359-0277-7",
     urlImagem: capaDomCasmurro,
-    urlPdf: "https://example.com/download/dom-casmurro.pdf",
+    pdfLocal: PDF1,
   },
   {
     id: 2,
-    titulo: "O Alienista",
+    titulo: "Mémorias Póstumas de Brás Cubas",
     nomeAutor: "Machado de Assis",
-    genero: "Romance",
+    genero: "Romance, Fiçção",
     isbn: "978-85-359-0212-8",
     urlImagem: capaOAlienista,
-    urlPdf: "https://example.com/download/o-alienista.pdf",
+    pdfLocal: PDF1,
   },
 ];
 
