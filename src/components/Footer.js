@@ -40,7 +40,7 @@ const Footer = () => (
                 { href: "https://facebook.com", name: "facebook", color: "grey" },
                 { href: "https://linkedin.com", name: "linkedin", color: "grey" },
                 { href: "https://instagram.com", name: "instagram", color: "grey" },
-                { href: "https://x.com", name: "x", color: "grey" },
+                { href: "https://wa.me/5581973417256", name: "whatsapp", color: "grey" },
                 { href: "https://youtube.com", name: "youtube", color: "grey" },
               ].map(({ href, name, color }) => (
                 <List.Item
