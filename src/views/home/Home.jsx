@@ -29,7 +29,7 @@ const livrosDefault = [
     id: 2,
     titulo: "Mémorias Póstumas de Brás Cubas",
     nomeAutor: "Machado de Assis",
-    genero: "Romance, Fiçção",
+    genero: "Romance, Ficcao",
     isbn: "978-85-359-0212-8",
     urlImagem: capaOAlienista,
     pdfLocal: PDF1,

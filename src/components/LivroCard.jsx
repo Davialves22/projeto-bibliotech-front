@@ -7,6 +7,7 @@ import {
   CardContentExtra,
   Image,
 } from "../views/home/Home.styles";
+import AvaliacaoLivro from "../views/livro/AvaliacaoLivro";
 
 export default function LivroCard({ livro }) {
   const [imageError, setImageError] = useState(false);
@@ -78,6 +79,7 @@ export default function LivroCard({ livro }) {
           content="Baixar PDF"
           style={{ fontSize: "0.75rem" }}
         />
+        <AvaliacaoLivro livroId={livro.id} />
       </CardContentExtra>
     </Card>
   );
