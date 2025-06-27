@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Icon } from "semantic-ui-react";
 import { Container, Title } from "./Home.styles";
 
+import { verificarPdfRemoto } from "../../uitls/verificarPdfRemoto";
 import GeneroMenu from "../../components/GeneroMenu/GeneroMenu";
 import LivroList from "../../components/LivroList";
 import LoaderFallback from "../../components/LoaderFallback";
@@ -72,12 +73,14 @@ export default function Home() {
     const fetchLivros = async () => {
       try {
         const response = await fetch("http://localhost:8080/api/livro/v1");
-        const data = (await response.ok)
-          ? await response.json()
-          : livrosDefault;
-        setLivros(data.length ? data : livrosDefault);
+        const data = (await response.ok) ? await response.json() : livrosDefault;
+        const livrosComPdf = await verificarPdfRemoto(
+          data.length ? data : livrosDefault
+        );
+        setLivros(livrosComPdf);
       } catch {
-        setLivros(livrosDefault);
+        const livrosComPdf = await verificarPdfRemoto(livrosDefault);
+        setLivros(livrosComPdf);
       } finally {
         setLoading(false);
       }
@@ -90,8 +93,8 @@ export default function Home() {
     filtro === "TODOS"
       ? livros
       : livros.filter(
-          (livro) => livro.genero?.toUpperCase() === filtro.toUpperCase()
-        );
+        (livro) => livro.genero?.toUpperCase() === filtro.toUpperCase()
+      );
 
   return (
     <>

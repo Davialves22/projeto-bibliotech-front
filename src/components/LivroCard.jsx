@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Card as SemanticCard } from "semantic-ui-react";
 import {
@@ -7,37 +7,15 @@ import {
   CardContentExtra,
   Image,
 } from "../views/home/Home.styles";
-import PDF1 from "../assets/PDFs/memoriasBras.pdf";
 
 export default function LivroCard({ livro }) {
   const [imageError, setImageError] = useState(false);
-  const [pdfExists, setPdfExists] = useState(false);
 
   const imageSrc = imageError
     ? livro.urlImagem
     : `http://localhost:8080/api/livro/v1/imagem/${livro.id}`;
 
-  const urlPdf = `http://localhost:8080/api/livro/v1/pdf/${livro.id}`;
-  const localPdf = PDF1;
-
-  useEffect(() => {
-    const checkPdfExists = async () => {
-      try {
-        const response = await fetch(urlPdf, { method: "HEAD" });
-        if (response.ok) {
-          setPdfExists(true);
-        }
-      } catch (error) {
-        console.warn("PDF remoto não encontrado:", error);
-        setPdfExists(false);
-      }
-    };
-
-    checkPdfExists();
-  }, [urlPdf]);
-
-  // Escolhe o PDF certo (remoto ou local)
-  const pdfLink = pdfExists ? urlPdf : localPdf;
+  const pdfLink = livro.pdfDisponivel ? livro.urlPdfRemoto : livro.pdfLocal;
 
   return (
     <Card>
