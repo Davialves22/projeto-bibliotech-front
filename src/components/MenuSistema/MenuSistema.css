@@ -1,6 +1,12 @@
 .menu-container {
-  padding: 5px;
+  padding: 0 !important;
+  margin: 0;
 }
+
+.menu-custom.ui.menu {
+  border-radius: 0 !important;
+}
+
 
 /* Estilo geral */
 .menu-custom {

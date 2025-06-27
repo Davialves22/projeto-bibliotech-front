@@ -19,7 +19,7 @@ export const Title = styled.h2`
   display: flex;
   align-items: center;
   gap: 0.4em;
-  font-size: 1.3em;
+  font-size: 2.5em;
 
   @media (max-width: 768px) {
     font-size: 1.1em;

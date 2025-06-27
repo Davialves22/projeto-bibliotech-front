@@ -48,7 +48,7 @@ export default function LivroCard({ livro }) {
           to={`/livro/${livro.id}`}
           primary
           fluid
-          icon="book"
+          icon="eye"
           content="Ver Detalhes"
           style={{ marginBottom: "0.5em", fontSize: "0.75rem" }}
         />
@@ -59,8 +59,8 @@ export default function LivroCard({ livro }) {
             download
             color="green"
             fluid
-            icon="download"
-            content="Baixar PDF"
+            icon="book"
+            content="Ler Online"
             style={{ fontSize: "0.75rem" }}
           />
         )}
