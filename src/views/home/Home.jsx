@@ -1,19 +1,15 @@
 import { useEffect, useState } from "react";
 import { Icon } from "semantic-ui-react";
-import {
-  Container,
-  Title,
-} from "./Home.styles";
-
+import { Container, Title } from "./Home.styles";
 
 import GeneroMenu from "../../components/GeneroMenu/GeneroMenu";
 import LivroList from "../../components/LivroList";
 import LoaderFallback from "../../components/LoaderFallback";
 import MenuSistema from "../../components/MenuSistema/MenuSistema";
 
-
 import capaDomCasmurro from "../../assets/livro1.jpeg";
 import capaOAlienista from "../../assets/livro2.jpeg";
+import Footer from "../../components/Footer";
 
 const livrosDefault = [
   {
@@ -37,7 +33,14 @@ const livrosDefault = [
 ];
 
 const generosDefaultFallback = [
-  "FICCAO", "ROMANCE", "DRAMA", "COMEDIA", "FANTASIA", "TERROR", "DOCUMENTARIO", "BIOGRAFIA",
+  "FICCAO",
+  "ROMANCE",
+  "DRAMA",
+  "COMEDIA",
+  "FANTASIA",
+  "TERROR",
+  "DOCUMENTARIO",
+  "BIOGRAFIA",
 ];
 
 export default function Home() {
@@ -66,7 +69,9 @@ export default function Home() {
     const fetchLivros = async () => {
       try {
         const response = await fetch("http://localhost:8080/api/livro/v1");
-        const data = await response.ok ? await response.json() : livrosDefault;
+        const data = (await response.ok)
+          ? await response.json()
+          : livrosDefault;
         setLivros(data.length ? data : livrosDefault);
       } catch {
         setLivros(livrosDefault);
@@ -81,8 +86,8 @@ export default function Home() {
   const livrosFiltrados =
     filtro === "TODOS"
       ? livros
-      : livros.filter((livro) =>
-          livro.genero?.toUpperCase() === filtro.toUpperCase()
+      : livros.filter(
+          (livro) => livro.genero?.toUpperCase() === filtro.toUpperCase()
         );
 
   return (
@@ -92,13 +97,18 @@ export default function Home() {
         <Title>
           Livros <Icon name="angle double right" size="small" />
         </Title>
-        <GeneroMenu filtro={filtro} generos={generosEnum} onChange={setFiltro} />
+        <GeneroMenu
+          filtro={filtro}
+          generos={generosEnum}
+          onChange={setFiltro}
+        />
         {loading ? (
           <LoaderFallback mensagem="Carregando livros..." />
         ) : (
           <LivroList livros={livrosFiltrados} filtro={filtro} />
         )}
       </Container>
+      <Footer />
     </>
   );
 }
