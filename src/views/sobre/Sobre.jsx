@@ -8,6 +8,7 @@ import {
 } from "semantic-ui-react";
 import CarouselFotos from "../../components/CarouselFotos";
 import MenuSistema from "../../components/MenuSistema/MenuSistema";
+import Footer from "../../components/Footer"
 
 export default function Sobre() {
   return (
@@ -96,6 +97,7 @@ export default function Sobre() {
             </Grid>
           </Segment>
         </Container>
+        <Footer/>
       </div>
     </div>
   );
