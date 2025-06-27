@@ -16,6 +16,7 @@ import MenuSistema from "../../components/MenuSistema/MenuSistema";
 
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Footer from "../../components/Footer";
 
 export default function ListLivro() {
   const [lista, setLista] = useState([]);
@@ -148,184 +149,191 @@ export default function ListLivro() {
   }
 
   return (
-    <div>
-      <MenuSistema tela="livro" />
-      <div style={{ marginTop: "3%" }}>
-        <Container textAlign="justified">
-          <h2>Livros Cadastrados</h2>
-          <Divider />
+    <>
+      <div>
+        <MenuSistema tela="livro" />
+        <div style={{ marginTop: "3%" }}>
+          <Container textAlign="justified">
+            <h2>Livros Cadastrados</h2>
+            <Divider />
 
-          <div style={{ marginTop: "4%" }}>
-            <Button
-              label="Novo"
-              circular
-              color="orange"
-              icon="clipboard outline"
-              floated="right"
-              as={Link}
-              to="/form-livro"
-            />
-            <br />
-            <br />
-            <br />
-            <Table textAlign="center" color="orange" sortable celled>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell>Capa</Table.HeaderCell>
-                  <Table.HeaderCell>Título</Table.HeaderCell>
-                  <Table.HeaderCell>Autor</Table.HeaderCell>
-                  <Table.HeaderCell>Gênero</Table.HeaderCell>
-                  <Table.HeaderCell>ISBN</Table.HeaderCell>
-                  <Table.HeaderCell textAlign="center">Ações</Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
+            <div style={{ marginTop: "4%" }}>
+              <Button
+                label="Novo"
+                circular
+                color="orange"
+                icon="clipboard outline"
+                floated="right"
+                as={Link}
+                to="/form-livro"
+              />
+              <br />
+              <br />
+              <br />
+              <Table textAlign="center" color="orange" sortable celled>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell>Capa</Table.HeaderCell>
+                    <Table.HeaderCell>Título</Table.HeaderCell>
+                    <Table.HeaderCell>Autor</Table.HeaderCell>
+                    <Table.HeaderCell>Gênero</Table.HeaderCell>
+                    <Table.HeaderCell>ISBN</Table.HeaderCell>
+                    <Table.HeaderCell textAlign="center">
+                      Ações
+                    </Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
 
-              <Table.Body>
-                {lista.length > 0 ? (
-                  lista.map((livro) => (
-                    <Table.Row key={livro.id}>
-                      <Table.Cell>
-                        <img
-                          src={
-                            livro.urlImagem ||
-                            `http://localhost:8080/api/livro/v1/imagem/${livro.id}`
-                          }
-                          alt={`Capa do livro ${livro.titulo}`}
-                          style={{ width: "60px", objectFit: "cover" }}
-                          onError={(e) => {
-                            if (
-                              e.currentTarget.src !==
-                              `${window.location.origin}/default.jpg`
-                            ) {
-                              e.currentTarget.src = "/default.jpg";
+                <Table.Body>
+                  {lista.length > 0 ? (
+                    lista.map((livro) => (
+                      <Table.Row key={livro.id}>
+                        <Table.Cell>
+                          <img
+                            src={
+                              livro.urlImagem ||
+                              `http://localhost:8080/api/livro/v1/imagem/${livro.id}`
                             }
-                          }}
-                        />
-                      </Table.Cell>
-                      <Table.Cell>{livro.titulo}</Table.Cell>
-                      <Table.Cell>{livro.nomeAutor || livro.autor}</Table.Cell>
-                      <Table.Cell>{livro.genero}</Table.Cell>
-                      <Table.Cell>{livro.isbn}</Table.Cell>
-                      <Table.Cell textAlign="center">
-                        <Button
-                          inverted
-                          circular
-                          color="green"
-                          icon
-                          title="Editar"
-                        >
-                          <Link
-                            to="/form-livro"
-                            state={{ id: livro.id }}
-                            style={{ color: "green" }}
+                            alt={`Capa do livro ${livro.titulo}`}
+                            style={{ width: "60px", objectFit: "cover" }}
+                            onError={(e) => {
+                              if (
+                                e.currentTarget.src !==
+                                `${window.location.origin}/default.jpg`
+                              ) {
+                                e.currentTarget.src = "/default.jpg";
+                              }
+                            }}
+                          />
+                        </Table.Cell>
+                        <Table.Cell>{livro.titulo}</Table.Cell>
+                        <Table.Cell>
+                          {livro.nomeAutor || livro.autor}
+                        </Table.Cell>
+                        <Table.Cell>{livro.genero}</Table.Cell>
+                        <Table.Cell>{livro.isbn}</Table.Cell>
+                        <Table.Cell textAlign="center">
+                          <Button
+                            inverted
+                            circular
+                            color="green"
+                            icon
+                            title="Editar"
                           >
-                            <Icon name="edit" />
-                          </Link>
-                        </Button>
-                        &nbsp;
-                        <Button
-                          inverted
-                          circular
-                          color="red"
-                          icon
-                          title="Remover"
-                          onClick={() => confirmaRemover(livro.id)}
-                        >
-                          <Icon name="trash" />
-                        </Button>
-                        &nbsp;
-                        <Button
-                          inverted
-                          circular
-                          color="blue"
-                          icon
-                          title="Detalhes"
-                          onClick={() => abrirModal(livro)}
-                        >
-                          <Icon name="eye" />
-                        </Button>
-                        &nbsp;
-                        <Button
-                          inverted
-                          circular
-                          color="violet"
-                          icon
-                          title="Download PDF"
-                          onClick={() => baixarPdf(livro)}
-                        >
-                          <Icon name="download" />
-                        </Button>
+                            <Link
+                              to="/form-livro"
+                              state={{ id: livro.id }}
+                              style={{ color: "green" }}
+                            >
+                              <Icon name="edit" />
+                            </Link>
+                          </Button>
+                          &nbsp;
+                          <Button
+                            inverted
+                            circular
+                            color="red"
+                            icon
+                            title="Remover"
+                            onClick={() => confirmaRemover(livro.id)}
+                          >
+                            <Icon name="trash" />
+                          </Button>
+                          &nbsp;
+                          <Button
+                            inverted
+                            circular
+                            color="blue"
+                            icon
+                            title="Detalhes"
+                            onClick={() => abrirModal(livro)}
+                          >
+                            <Icon name="eye" />
+                          </Button>
+                          &nbsp;
+                          <Button
+                            inverted
+                            circular
+                            color="violet"
+                            icon
+                            title="Download PDF"
+                            onClick={() => baixarPdf(livro)}
+                          >
+                            <Icon name="download" />
+                          </Button>
+                        </Table.Cell>
+                      </Table.Row>
+                    ))
+                  ) : (
+                    <Table.Row>
+                      <Table.Cell colSpan="6">
+                        Nenhum livro encontrado.
                       </Table.Cell>
                     </Table.Row>
-                  ))
-                ) : (
-                  <Table.Row>
-                    <Table.Cell colSpan="6">
-                      Nenhum livro encontrado.
-                    </Table.Cell>
-                  </Table.Row>
+                  )}
+                </Table.Body>
+              </Table>
+            </div>
+
+            {/* Modal de confirmação de remoção */}
+            <Modal basic onClose={() => setOpenModal(false)} open={openModal}>
+              <Header icon>
+                <Icon name="trash" />
+                Tem certeza que deseja remover esse registro?
+              </Header>
+              <Modal.Actions>
+                <Button
+                  basic
+                  color="red"
+                  inverted
+                  onClick={() => setOpenModal(false)}
+                >
+                  <Icon name="remove" /> Não
+                </Button>
+                <Button color="green" inverted onClick={remover}>
+                  <Icon name="checkmark" /> Sim
+                </Button>
+              </Modal.Actions>
+            </Modal>
+
+            {/* Modal de detalhes */}
+            <Modal
+              onClose={() => setModalAberto(false)}
+              open={modalAberto}
+              size="small"
+            >
+              <Modal.Header>Detalhes do Livro</Modal.Header>
+              <Modal.Content>
+                {entregadorSelecionado && (
+                  <div>
+                    <p>
+                      <strong>Título:</strong> {entregadorSelecionado.titulo}
+                    </p>
+                    <p>
+                      <strong>Autor:</strong>{" "}
+                      {entregadorSelecionado.nomeAutor ||
+                        entregadorSelecionado.autor}
+                    </p>
+                    <p>
+                      <strong>Gênero:</strong> {entregadorSelecionado.genero}
+                    </p>
+                    <p>
+                      <strong>ISBN:</strong> {entregadorSelecionado.isbn}
+                    </p>
+                  </div>
                 )}
-              </Table.Body>
-            </Table>
-          </div>
-
-          {/* Modal de confirmação de remoção */}
-          <Modal basic onClose={() => setOpenModal(false)} open={openModal}>
-            <Header icon>
-              <Icon name="trash" />
-              Tem certeza que deseja remover esse registro?
-            </Header>
-            <Modal.Actions>
-              <Button
-                basic
-                color="red"
-                inverted
-                onClick={() => setOpenModal(false)}
-              >
-                <Icon name="remove" /> Não
-              </Button>
-              <Button color="green" inverted onClick={remover}>
-                <Icon name="checkmark" /> Sim
-              </Button>
-            </Modal.Actions>
-          </Modal>
-
-          {/* Modal de detalhes */}
-          <Modal
-            onClose={() => setModalAberto(false)}
-            open={modalAberto}
-            size="small"
-          >
-            <Modal.Header>Detalhes do Livro</Modal.Header>
-            <Modal.Content>
-              {entregadorSelecionado && (
-                <div>
-                  <p>
-                    <strong>Título:</strong> {entregadorSelecionado.titulo}
-                  </p>
-                  <p>
-                    <strong>Autor:</strong>{" "}
-                    {entregadorSelecionado.nomeAutor ||
-                      entregadorSelecionado.autor}
-                  </p>
-                  <p>
-                    <strong>Gênero:</strong> {entregadorSelecionado.genero}
-                  </p>
-                  <p>
-                    <strong>ISBN:</strong> {entregadorSelecionado.isbn}
-                  </p>
-                </div>
-              )}
-            </Modal.Content>
-            <Modal.Actions>
-              <Button color="black" onClick={() => setModalAberto(false)}>
-                Fechar
-              </Button>
-            </Modal.Actions>
-          </Modal>
-        </Container>
+              </Modal.Content>
+              <Modal.Actions>
+                <Button color="black" onClick={() => setModalAberto(false)}>
+                  Fechar
+                </Button>
+              </Modal.Actions>
+            </Modal>
+          </Container>
+        </div>
+        <ToastContainer position="top-right" autoClose={3000} />
       </div>
-      <ToastContainer position="top-right" autoClose={3000} />
-    </div>
+      <Footer />
+    </>
   );
 }

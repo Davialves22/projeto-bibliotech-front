@@ -7,7 +7,7 @@ const Footer = () => (
     inverted
     vertical
     as="footer"
-    style={{ padding: "4em 0 2em", background: "#1c4071" }}
+    style={{ padding: "4em 0 2em", background: "#1c4071", marginTop: "4rem" }}
   >
     <Container>
       <Grid divided inverted stackable>
@@ -59,7 +59,8 @@ const Footer = () => (
           {/* Newsletter */}
           <Grid.Column width={7} className="footer-column">
             <Header inverted as="h3" content="Newsletter" />
-            <p>Receba as novidades da nossa Clínica por E‑mail.</p>
+            <p>Receba as novidades, tem alguma sugestão? alguma dúvida? fale conosco pelo e-mail
+              .</p>
             <Input
               fluid
               inverted
@@ -84,7 +85,7 @@ const Footer = () => (
 
       <Container textAlign="center">
         <p style={{ margin: 0, fontSize: "1em", color: "rgba(255,255,255,0.8)" }}>
-          &copy; {new Date().getFullYear()} MedPlus. Todos os direitos reservados.
+          &copy; {new Date().getFullYear()} Biliotech. Todos os direitos reservados.
         </p>
       </Container>
     </Container>
