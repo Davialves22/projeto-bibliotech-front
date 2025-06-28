@@ -6,35 +6,10 @@ import GeneroMenu from "../../components/GeneroMenu/GeneroMenu";
 import LivroList from "../../components/LivroList";
 import LoaderFallback from "../../components/LoaderFallback";
 import MenuSistema from "../../components/MenuSistema/MenuSistema";
+import { livrosDefault } from "../../uitls/livrosDefault";
 import { verificarPdfRemoto } from "../../uitls/verificarPdfRemoto";
 
-import capaDomCasmurro from "../../assets/livro1.jpeg";
-import capaOAlienista from "../../assets/livro2.jpeg";
-
-import PDF1 from "../../assets/PDFs/memoriasBras.pdf";
-
 import Footer from "../../components/Footer";
-
-const livrosDefault = [
-  {
-    id: 1,
-    titulo: "Dom Casmurro",
-    nomeAutor: "Machado de Assis",
-    genero: "Romance",
-    isbn: "978-85-359-0277-7",
-    urlImagem: capaDomCasmurro,
-    pdfLocal: PDF1,
-  },
-  {
-    id: 2,
-    titulo: "Mémorias Póstumas de Brás Cubas",
-    nomeAutor: "Machado de Assis",
-    genero: "Romance, Ficcao",
-    isbn: "978-85-359-0212-8",
-    urlImagem: capaOAlienista,
-    pdfLocal: PDF1,
-  },
-];
 
 const generosDefaultFallback = [
   "FICCAO",
@@ -73,7 +48,9 @@ export default function Home() {
     const fetchLivros = async () => {
       try {
         const response = await fetch("http://localhost:8080/api/livro/v1");
-        const data = (await response.ok) ? await response.json() : livrosDefault;
+        const data = (await response.ok)
+          ? await response.json()
+          : livrosDefault;
         const livrosComPdf = await verificarPdfRemoto(
           data.length ? data : livrosDefault
         );
@@ -93,8 +70,8 @@ export default function Home() {
     filtro === "TODOS"
       ? livros
       : livros.filter(
-        (livro) => livro.genero?.toUpperCase() === filtro.toUpperCase()
-      );
+          (livro) => livro.genero?.toUpperCase() === filtro.toUpperCase()
+        );
 
   return (
     <>
