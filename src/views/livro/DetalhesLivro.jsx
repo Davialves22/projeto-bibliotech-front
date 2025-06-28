@@ -13,10 +13,9 @@ import {
   Segment,
 } from "semantic-ui-react";
 import MenuSistema from "../../components/MenuSistema/MenuSistema";
+import { livrosDefault } from "../../uitls/livrosDefault";
 import AvaliacaoLivro from "./AvaliacaoLivro";
 
-import capaDomCasmurro from "../../assets/livro1.jpeg";
-import capaOAlienista from "../../assets/livro2.jpeg";
 import Footer from "../../components/Footer";
 
 export default function LivroDetalhes() {
@@ -26,30 +25,9 @@ export default function LivroDetalhes() {
   const [erro, setErro] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  const livrosMock = {
-    1: {
-      id: 1,
-      titulo: "Dom Casmurro",
-      nomeAutor: "Machado de Assis",
-      genero: "Romance",
-      isbn: "978-85-359-0277-7",
-      dataPublicacao: "01/01/1899",
-      nacionalidadeAutor: "Brasileiro",
-      urlImagem: capaDomCasmurro,
-      urlPdf: "https://www.dominiopublico.gov.br/download/texto/bv000110.pdf",
-    },
-    2: {
-      id: 2,
-      titulo: "O Alienista",
-      nomeAutor: "Machado de Assis",
-      genero: "Conto",
-      isbn: "978-85-359-0212-8",
-      dataPublicacao: "01/01/1882",
-      nacionalidadeAutor: "Brasileiro",
-      urlImagem: capaOAlienista,
-      urlPdf: "https://www.dominiopublico.gov.br/download/texto/bv000122.pdf",
-    },
-  };
+  const livrosMock = Object.fromEntries(
+    livrosDefault.map((livro) => [livro.id, livro])
+  );
 
   useEffect(() => {
     axios
