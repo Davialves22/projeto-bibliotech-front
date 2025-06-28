@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Dropdown, Input, Menu } from "semantic-ui-react";
+import { Accordion, Dropdown, Icon, Input, Menu } from "semantic-ui-react";
 import "./MenuSistema.css";
 
 export default function MenuSistema(props) {
@@ -8,6 +8,17 @@ export default function MenuSistema(props) {
   const location = useLocation();
   const [busca, setBusca] = useState("");
   const [menuAberto, setMenuAberto] = useState(false);
+
+  const [activeIndexLivro, setActiveIndexLivro] = useState(-1);
+  const [activeIndexUsuario, setActiveIndexUsuario] = useState(-1);
+
+  const handleClickLivro = () => {
+    setActiveIndexLivro(activeIndexLivro === 0 ? -1 : 0);
+  };
+
+  const handleClickUsuario = () => {
+    setActiveIndexUsuario(activeIndexUsuario === 0 ? -1 : 0);
+  };
 
   const handleBusca = (e) => {
     if (e.key === "Enter") {
@@ -19,7 +30,6 @@ export default function MenuSistema(props) {
   return (
     <div className="menu-container">
       <Menu className="menu-custom" inverted stackable>
-
         {/* Menu completo - Desktop */}
         <div className="desktop-menu">
           <Menu.Item
@@ -35,13 +45,17 @@ export default function MenuSistema(props) {
                 as={Link}
                 to="/form-livro"
                 text="Cadastro"
-                active={props.tela === "livro" && location.pathname.includes("form")}
+                active={
+                  props.tela === "livro" && location.pathname.includes("form")
+                }
               />
               <Dropdown.Item
                 as={Link}
                 to="/list-livro"
                 text="Ver Todos"
-                active={props.tela === "livro" && location.pathname.includes("list")}
+                active={
+                  props.tela === "livro" && location.pathname.includes("list")
+                }
               />
             </Dropdown.Menu>
           </Dropdown>
@@ -52,13 +66,17 @@ export default function MenuSistema(props) {
                 as={Link}
                 to="/form-usuario"
                 text="Cadastro"
-                active={props.tela === "usuario" && location.pathname.includes("form")}
+                active={
+                  props.tela === "usuario" && location.pathname.includes("form")
+                }
               />
               <Dropdown.Item
                 as={Link}
                 to="/list-usuario"
                 text="Ver Todos"
-                active={props.tela === "usuario" && location.pathname.includes("list")}
+                active={
+                  props.tela === "usuario" && location.pathname.includes("list")
+                }
               />
             </Dropdown.Menu>
           </Dropdown>
@@ -83,57 +101,115 @@ export default function MenuSistema(props) {
 
         {/* Menu mobile - botão */}
         <div className="mobile-menu">
-          <Menu.Item onClick={() => setMenuAberto(!menuAberto)}>
-            <i className="bars icon" /> 
+          <Menu.Item onClick={() => setMenuAberto(true)}>
+            <i className="bars icon" />
           </Menu.Item>
-
-          {menuAberto && (
-            <div className="mobile-dropdown">
-              <Menu.Item as={Link} to="/" onClick={() => setMenuAberto(false)}>
-                Home
-              </Menu.Item>
-
-              <Dropdown item text="Livro">
-                <Dropdown.Menu>
-                  <Dropdown.Item as={Link} to="/form-livro" onClick={() => setMenuAberto(false)}>
-                    Cadastro
-                  </Dropdown.Item>
-                  <Dropdown.Item as={Link} to="/list-livro" onClick={() => setMenuAberto(false)}>
-                    Ver Todos
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-
-              <Dropdown item text="Usuario">
-                <Dropdown.Menu>
-                  <Dropdown.Item as={Link} to="/form-usuario" onClick={() => setMenuAberto(false)}>
-                    Cadastro
-                  </Dropdown.Item>
-                  <Dropdown.Item as={Link} to="/list-usuario" onClick={() => setMenuAberto(false)}>
-                    Ver Todos
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-
-              <Menu.Item as={Link} to="/sobre" onClick={() => setMenuAberto(false)}>
-                Sobre
-              </Menu.Item>
-
-              <Menu.Item>
-                <Input
-                  icon="search"
-                  placeholder="Buscar livro..."
-                  value={busca}
-                  onChange={(e) => setBusca(e.target.value)}
-                  onKeyDown={handleBusca}
-                />
-              </Menu.Item>
-            </div>
-          )}
         </div>
 
-        {/* Logo fixo à direita */}
-        <Menu.Menu position="right">
+        {/* Sidebar lateral */}
+        <div className={`sidebar ${menuAberto ? "sidebar-open" : ""}`}>
+          <div className="sidebar-header">
+            <button
+              className="sidebar-close-btn"
+              onClick={() => setMenuAberto(false)}
+            >
+              &times;
+            </button>
+          </div>
+
+          <Menu vertical fluid inverted>
+            <Menu.Item as={Link} to="/" onClick={() => setMenuAberto(false)}>
+              Home
+            </Menu.Item>
+
+            <Accordion as={Menu.Item} vertical fluid inverted>
+              <Accordion.Title
+                active={activeIndexLivro === 0}
+                index={0}
+                onClick={handleClickLivro}
+              >
+                <Icon name="dropdown" />
+                Livro
+              </Accordion.Title>
+              <Accordion.Content active={activeIndexLivro === 0}>
+                <Menu.Menu>
+                  <Menu.Item
+                    as={Link}
+                    to="/form-livro"
+                    onClick={() => setMenuAberto(false)}
+                  >
+                    Cadastro
+                  </Menu.Item>
+                  <Menu.Item
+                    as={Link}
+                    to="/list-livro"
+                    onClick={() => setMenuAberto(false)}
+                  >
+                    Ver Todos
+                  </Menu.Item>
+                </Menu.Menu>
+              </Accordion.Content>
+            </Accordion>
+
+            <Accordion as={Menu.Item} vertical fluid inverted>
+              <Accordion.Title
+                active={activeIndexUsuario === 0}
+                index={0}
+                onClick={handleClickUsuario}
+              >
+                <Icon name="dropdown" />
+                Usuário
+              </Accordion.Title>
+              <Accordion.Content active={activeIndexUsuario === 0}>
+                <Menu.Menu>
+                  <Menu.Item
+                    as={Link}
+                    to="/form-usuario"
+                    onClick={() => setMenuAberto(false)}
+                  >
+                    Cadastro
+                  </Menu.Item>
+                  <Menu.Item
+                    as={Link}
+                    to="/list-usuario"
+                    onClick={() => setMenuAberto(false)}
+                  >
+                    Ver Todos
+                  </Menu.Item>
+                </Menu.Menu>
+              </Accordion.Content>
+            </Accordion>
+
+            <Menu.Item
+              as={Link}
+              to="/sobre"
+              onClick={() => setMenuAberto(false)}
+            >
+              Sobre
+            </Menu.Item>
+
+            <Menu.Item>
+              <Input
+                icon="search"
+                placeholder="Buscar livro..."
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                onKeyDown={handleBusca}
+              />
+            </Menu.Item>
+          </Menu>
+        </div>
+
+        {/* Overlay */}
+        {menuAberto && (
+          <div
+            className="sidebar-overlay"
+            onClick={() => setMenuAberto(false)}
+          ></div>
+        )}
+
+        {/* Logo fixo */}
+        <Menu.Menu position="right" className="logo-fixo">
           <Menu.Item>
             <img src="/favicon.ico" alt="Logo" style={{ height: "30px" }} />
           </Menu.Item>

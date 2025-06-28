@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Rating, TextArea, Button } from "semantic-ui-react";
+import { Button, Rating, TextArea } from "semantic-ui-react";
 import { useAvaliacoes } from "../../uitls/useAvaliacoes";
 
 export default function AvaliacaoLivro({ livroId }) {

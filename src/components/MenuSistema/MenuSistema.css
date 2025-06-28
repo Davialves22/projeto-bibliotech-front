@@ -7,7 +7,6 @@
   border-radius: 0 !important;
 }
 
-
 /* Estilo geral */
 .menu-custom {
   background-color: var(--color-900, #1b1c1d) !important;
@@ -37,45 +36,70 @@
   padding: 0 1rem;
 }
 
-/* Menu botão e dropdown para mobile */
-.mobile-menu {
-  display: none;
-  flex-direction: column;
-  width: 100%;
+/* Sidebar padrão: escondida à esquerda e oculta */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px; /* começa escondida */
+  width: 250px;
+  height: 100vh;
+  background-color: #1b1c1d;
+  padding: 1rem;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+  transition: left 0.3s ease;
+  z-index: 1000;
+  overflow-y: auto;
+  display: none; /* oculto por padrão */
 }
 
-.mobile-dropdown {
-  display: none;
-  flex-direction: column;
-  width: 100%;
-  padding: 0.5em 1em;
-  background-color: var(--color-800, #2c2c2c);
+/* Quando aberta, aparece */
+.sidebar-open {
+  left: 0;
 }
 
-.mobile-dropdown .item {
-  font-size: 1em;
-  padding: 0.5em 0.75em;
-  color: white !important;
+/* Botão de fechar */
+.sidebar-header {
+  display: flex;
+  justify-content: flex-end;
 }
 
-.mobile-dropdown .ui.dropdown .menu {
-  background: var(--color-100, #333);
+.sidebar-close-btn {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
 }
 
-.mobile-dropdown .ui.dropdown .item {
-  color: white !important;
+/* Overlay escuro atrás da sidebar */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
 }
 
-/* Responsivo */
+/* Responsivo para telas até 768px */
 @media (max-width: 768px) {
+  /* Esconde menu desktop no mobile */
   .desktop-menu {
     display: none !important;
   }
 
+  /* Mostra o botão menu mobile */
   .mobile-menu {
     display: flex !important;
   }
 
+  /* Mostra a sidebar no mobile */
+  .sidebar {
+    display: block;
+  }
+
+  /* Mantém o dropdown mobile e busca mobile */
   .mobile-dropdown {
     display: flex !important;
   }
@@ -87,5 +111,16 @@
 
   .menu-custom .mobile-search-input {
     width: 100%;
+  }
+  .logo-fixo {
+    display: none !important;
+  }
+}
+
+/* Importante: Esconder menu mobile e sidebar no desktop */
+@media (min-width: 769px) {
+  .mobile-menu,
+  .sidebar {
+    display: none !important;
   }
 }

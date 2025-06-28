@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import { Icon } from "semantic-ui-react";
 import { Container, Title } from "./Home.styles";
 
-import { verificarPdfRemoto } from "../../uitls/verificarPdfRemoto";
 import GeneroMenu from "../../components/GeneroMenu/GeneroMenu";
 import LivroList from "../../components/LivroList";
 import LoaderFallback from "../../components/LoaderFallback";
 import MenuSistema from "../../components/MenuSistema/MenuSistema";
+import { verificarPdfRemoto } from "../../uitls/verificarPdfRemoto";
 
 import capaDomCasmurro from "../../assets/livro1.jpeg";
 import capaOAlienista from "../../assets/livro2.jpeg";
 
-import PDF1 from "../../assets/PDFs/memoriasBras.pdf"
+import PDF1 from "../../assets/PDFs/memoriasBras.pdf";
 
 import Footer from "../../components/Footer";
 
