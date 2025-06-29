@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Accordion, Dropdown, Icon, Input, Menu } from "semantic-ui-react";
 import Logo from "../../assets/Logo_sem_fundo.png";
 import "./MenuSistema.css";
+import { motion, AnimatePresence } from "framer-motion";
+
 
 export default function MenuSistema(props) {
   const navigate = useNavigate();

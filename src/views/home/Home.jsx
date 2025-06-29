@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Icon } from "semantic-ui-react";
+import { Button, Icon } from "semantic-ui-react"; // Importa Button para os botões
 import { Container, Title } from "./Home.styles";
 
 import GeneroMenu from "../../components/GeneroMenu/GeneroMenu";
@@ -22,11 +22,16 @@ const generosDefaultFallback = [
   "BIOGRAFIA",
 ];
 
+const ITENS_POR_PAGINA = 10; // quantos livros por página
+
 export default function Home() {
   const [filtro, setFiltro] = useState("TODOS");
   const [generosEnum, setGenerosEnum] = useState(generosDefaultFallback);
   const [livros, setLivros] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Estado para paginação
+  const [paginaAtual, setPaginaAtual] = useState(1);
 
   useEffect(() => {
     const fetchGeneros = async () => {
@@ -66,12 +71,36 @@ export default function Home() {
     fetchLivros();
   }, []);
 
+  // Quando mudar o filtro, volta para a página 1
+  useEffect(() => {
+    setPaginaAtual(1);
+  }, [filtro]);
+
+  // Livros filtrados pelo gênero
   const livrosFiltrados =
     filtro === "TODOS"
       ? livros
       : livros.filter(
           (livro) => livro.genero?.toUpperCase() === filtro.toUpperCase()
         );
+
+  // Calcular total de páginas
+  const totalPaginas = Math.ceil(livrosFiltrados.length / ITENS_POR_PAGINA);
+
+  // Livros para mostrar na página atual (slice do array)
+  const livrosPaginaAtual = livrosFiltrados.slice(
+    (paginaAtual - 1) * ITENS_POR_PAGINA,
+    paginaAtual * ITENS_POR_PAGINA
+  );
+
+  // Funções para navegação
+  const irParaPaginaAnterior = () => {
+    setPaginaAtual((p) => Math.max(p - 1, 1));
+  };
+
+  const irParaPaginaProxima = () => {
+    setPaginaAtual((p) => Math.min(p + 1, totalPaginas));
+  };
 
   return (
     <>
@@ -88,7 +117,53 @@ export default function Home() {
         {loading ? (
           <LoaderFallback mensagem="Carregando livros..." />
         ) : (
-          <LivroList livros={livrosFiltrados} filtro={filtro} />
+          <>
+            <p
+              style={{
+                marginTop: 20,
+                fontSize: "20px",
+                fontWeight: "600",
+                color: "#444",
+                marginBottom: "15px",
+                fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+            >
+              <Icon name="book" />
+              Mostrando {livrosFiltrados.length}{" "}
+              {livrosFiltrados.length === 1 ? "livro" : "livros"}
+            </p>
+            <LivroList livros={livrosPaginaAtual} filtro={filtro} />
+
+            {/* Controles de paginação */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: 90,
+                gap: 10,
+              }}
+            >
+              <Button
+                onClick={irParaPaginaAnterior}
+                disabled={paginaAtual === 1}
+                icon="angle left"
+                content="Anterior"
+              />
+              <div style={{ alignSelf: "center" }}>
+                Página {paginaAtual} de {totalPaginas}
+              </div>
+              <Button
+                onClick={irParaPaginaProxima}
+                disabled={paginaAtual === totalPaginas || totalPaginas === 0}
+                icon="angle right"
+                labelPosition="right"
+                content="Próxima"
+              />
+            </div>
+          </>
         )}
       </Container>
       <Footer />
