@@ -9,6 +9,7 @@
 
 /* Estilo geral */
 .menu-custom {
+height: 80px;
   background-color: var(--color-900, #1b1c1d) !important;
   color: white;
 }

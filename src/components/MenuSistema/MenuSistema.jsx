@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Accordion, Dropdown, Icon, Input, Menu } from "semantic-ui-react";
+import Logo from "../../assets/Logo_sem_fundo.png";
 import "./MenuSistema.css";
 
 export default function MenuSistema(props) {
@@ -88,13 +89,38 @@ export default function MenuSistema(props) {
             to="/sobre"
           />
 
-          <Menu.Item>
+          <Menu.Item
+            style={{
+              flexGrow: 1,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <Input
               icon="search"
+              iconPosition="left"
+              action={{
+                icon: "arrow right",
+                onClick: () => {
+                  if (busca.trim()) {
+                    navigate(`/list-livro?busca=${encodeURIComponent(busca)}`);
+                    setMenuAberto(false);
+                  }
+                },
+              }}
               placeholder="Buscar livro..."
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
               onKeyDown={handleBusca}
+              fluid
+              style={{
+                minWidth: "300px",
+                maxWidth: "500px",
+                width: "100%",
+                borderRadius: "30px",
+                padding: "5px 10px",
+              }}
             />
           </Menu.Item>
         </div>
@@ -211,7 +237,7 @@ export default function MenuSistema(props) {
         {/* Logo fixo */}
         <Menu.Menu position="right" className="logo-fixo">
           <Menu.Item>
-            <img src="/favicon.ico" alt="Logo" style={{ height: "30px" }} />
+            <img src={Logo} alt="Logo" style={{ height: "40px" }} />
           </Menu.Item>
         </Menu.Menu>
       </Menu>
