@@ -4,7 +4,10 @@ export const verificarPdfRemoto = async (livros) => {
     livros.map(async (livro) => {
       const urlPdf = `http://localhost:8080/api/livro/v1/pdf/${livro.id}`;
       try {
-        const response = await fetch(urlPdf, { method: "HEAD" });
+        const response = await fetch(urlPdf, {
+          method: "GET",
+        });
+
         return {
           ...livro,
           pdfDisponivel: response.ok,

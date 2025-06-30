@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Accordion, Dropdown, Icon, Input, Menu } from "semantic-ui-react";
 import Logo from "../../assets/Logo_sem_fundo.png";
 import "./MenuSistema.css";
-import { motion, AnimatePresence } from "framer-motion";
 
 
 export default function MenuSistema(props) {
@@ -150,7 +149,7 @@ export default function MenuSistema(props) {
               Home
             </Menu.Item>
 
-            <Accordion as={Menu.Item} vertical fluid inverted>
+            <Accordion as={Menu.Item} fluid inverted>
               <Accordion.Title
                 active={activeIndexLivro === 0}
                 index={0}
@@ -179,7 +178,7 @@ export default function MenuSistema(props) {
               </Accordion.Content>
             </Accordion>
 
-            <Accordion as={Menu.Item} vertical fluid inverted>
+            <Accordion as={Menu.Item}  fluid inverted>
               <Accordion.Title
                 active={activeIndexUsuario === 0}
                 index={0}
