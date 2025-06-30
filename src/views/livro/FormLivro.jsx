@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button, Container, Divider, Form, Icon } from "semantic-ui-react";
 import MenuSistema from "../../components/MenuSistema/MenuSistema";
 
@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 export default function FormLivro() {
   const { state } = useLocation();
   const [idLivro, setIdLivro] = useState();
+  const navigate = useNavigate();
 
   const [titulo, setTitulo] = useState("");
   const [nomeAutor, setNomeAutor] = useState("");
@@ -102,8 +103,16 @@ export default function FormLivro() {
     request
       .then((response) => {
         console.log("✅ Livro salvo com sucesso!", response.data);
+
+        // Exibe o toast
         toast.success("Livro salvo com sucesso!");
+
+        // Aguarda 3 segundos antes de navegar
+        setTimeout(() => {
+          navigate("/");
+        }, 3000);
       })
+
       .catch((error) => {
         console.error("❌ Erro ao salvar o Livro:", error);
 
@@ -264,7 +273,7 @@ export default function FormLivro() {
         </Container>
       </div>
 
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={3000} Link={"/home"} />
     </div>
   );
 }
