@@ -185,7 +185,7 @@ export default function FormUsuario() {
           <Divider />
 
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <Link to={"/list-usuario"}>
+            <Link to={"/login"}>
               <Button
                 icon
                 labelPosition="left"

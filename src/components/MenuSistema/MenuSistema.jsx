@@ -1,9 +1,15 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Accordion, Dropdown, Icon, Input, Menu } from "semantic-ui-react";
+import {
+  Accordion,
+  Button,
+  Dropdown,
+  Icon,
+  Input,
+  Menu,
+} from "semantic-ui-react";
 import Logo from "../../assets/Logo_sem_fundo.png";
 import "./MenuSistema.css";
-
 
 export default function MenuSistema(props) {
   const navigate = useNavigate();
@@ -178,7 +184,7 @@ export default function MenuSistema(props) {
               </Accordion.Content>
             </Accordion>
 
-            <Accordion as={Menu.Item}  fluid inverted>
+            <Accordion as={Menu.Item} fluid inverted>
               <Accordion.Title
                 active={activeIndexUsuario === 0}
                 index={0}
@@ -237,6 +243,35 @@ export default function MenuSistema(props) {
 
         {/* Logo fixo */}
         <Menu.Menu position="right" className="logo-fixo">
+          <Menu.Item>
+            <Button
+              as={Link}
+              to="/login"
+              onClick={() => setMenuAberto(false)}
+              primary
+              content="Login"
+              style={{
+                minWidth: "110px",
+                borderRadius: "25px",
+                fontWeight: "700",
+                boxShadow: "0 4px 15px rgba(41, 128, 185, 0.4)",
+                transition: "all 0.3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#1B4F72";
+                e.currentTarget.style.boxShadow =
+                  "0 6px 20px rgba(27, 79, 114, 0.7)";
+                e.currentTarget.style.transform = "scale(1.05)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 15px rgba(41, 128, 185, 0.4)";
+                e.currentTarget.style.transform = "scale(1)";
+              }}
+            />
+          </Menu.Item>
+
           <Menu.Item>
             <img src={Logo} alt="Logo" style={{ height: "40px" }} />
           </Menu.Item>
