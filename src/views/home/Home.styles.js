@@ -176,6 +176,33 @@ export const Card = styled(SemanticCard)`
   }
 `;
 
+
+
+export const ScrollTopButton = styled.button`
+  width: 50px;
+  height: 50px;
+  position: fixed;
+
+  right: 20px;
+  bottom: 40px; /* Espaçamento mais próximo do rodapé */
+  background-color: #0077B6;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  padding: 14px 18px;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(0, 119, 182, 0.4);
+  opacity: ${(props) => (props.show ? 1 : 0)};
+  visibility: ${(props) => (props.show ? "visible" : "hidden")};
+  transition: opacity 0.3s ease, visibility 0.3s ease, background-color 0.3s ease;
+  z-index: 1000;
+
+  &:hover {
+    background-color: #0096c7;
+  }
+`;
+
 // Imagem do livro
 export const Image = styled(SemanticImage)`
   width: 100% !important;

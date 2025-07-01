@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button, Icon } from "semantic-ui-react";
 
 import Footer from "../../components/Footer";
@@ -7,29 +7,33 @@ import LivroList from "../../components/LivroList";
 import LoaderFallback from "../../components/LoaderFallback";
 import MenuSistema from "../../components/MenuSistema/MenuSistema";
 
-import { livrosDefault } from "../../uitls/livrosDefault";
-import { verificarPdfRemoto } from "../../uitls/verificarPdfRemoto";
-
 import {
   AnoButton,
   GridLayout,
   MainContent,
   PaginationContainer,
   RightFilter,
+  ScrollTopButton,
   Sidebar,
 } from "./Home.styles";
+
+import { livrosDefault } from "../../uitls/livrosDefault";
+import { verificarPdfRemoto } from "../../uitls/verificarPdfRemoto";
 
 const ITENS_POR_PAGINA = 10;
 
 export default function Home() {
   const [filtro, setFiltro] = useState("TODOS");
   const [filtroAno, setFiltroAno] = useState("TODOS");
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   const [generosEnum, setGenerosEnum] = useState([]);
   const [anosDisponiveis, setAnosDisponiveis] = useState(["TODOS"]);
   const [livros, setLivros] = useState([]);
   const [loading, setLoading] = useState(true);
   const [paginaAtual, setPaginaAtual] = useState(1);
+
+  const footerRef = useRef(null);
 
   // Buscar gêneros da API ou fallback
   useEffect(() => {
@@ -78,7 +82,9 @@ export default function Home() {
         setLivros(livrosComPdf);
 
         const anos = [
-          ...new Set(livrosDefault.map((l) => new Date(l.dataPublicacao).getFullYear())),
+          ...new Set(
+            livrosDefault.map((l) => new Date(l.dataPublicacao).getFullYear())
+          ),
         ].sort((a, b) => b - a);
         setAnosDisponiveis(["TODOS", ...anos]);
       } finally {
@@ -96,7 +102,8 @@ export default function Home() {
   // Filtrar livros por gênero e ano
   const livrosFiltrados = livros.filter((livro) => {
     const generoOk =
-      filtro === "TODOS" || livro.genero?.toUpperCase() === filtro.toUpperCase();
+      filtro === "TODOS" ||
+      livro.genero?.toUpperCase() === filtro.toUpperCase();
     const anoLivro = new Date(livro.dataPublicacao).getFullYear();
     const anoOk = filtroAno === "TODOS" || anoLivro === parseInt(filtroAno);
     return generoOk && anoOk;
@@ -109,6 +116,30 @@ export default function Home() {
     (paginaAtual - 1) * ITENS_POR_PAGINA,
     paginaAtual * ITENS_POR_PAGINA
   );
+
+  // IntersectionObserver para mostrar o botão quando o footer estiver visível
+  useEffect(() => {
+    if (!footerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowScrollTop(entry.isIntersecting);
+      },
+      {
+        root: null,
+        threshold: 0.1,
+      }
+    );
+
+    observer.observe(footerRef.current);
+
+    return () => observer.disconnect();
+  }, [footerRef]);
+
+  // Rola para o topo suavemente
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <>
@@ -163,7 +194,9 @@ export default function Home() {
                   Página {paginaAtual} de {totalPaginas || 1}
                 </div>
                 <Button
-                  onClick={() => setPaginaAtual((p) => Math.min(p + 1, totalPaginas))}
+                  onClick={() =>
+                    setPaginaAtual((p) => Math.min(p + 1, totalPaginas))
+                  }
                   disabled={paginaAtual === totalPaginas || totalPaginas === 0}
                   icon="angle right"
                   labelPosition="right"
@@ -192,7 +225,18 @@ export default function Home() {
         </RightFilter>
       </GridLayout>
 
-      <Footer />
+      <ScrollTopButton
+        onClick={scrollToTop}
+        show={showScrollTop}
+        aria-label="Voltar ao topo"
+      >
+        ↑
+      </ScrollTopButton>
+
+      {/* Coloque a ref para observar o footer */}
+      <div ref={footerRef}>
+        <Footer />
+      </div>
     </>
   );
 }
