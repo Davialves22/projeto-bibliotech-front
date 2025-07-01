@@ -52,6 +52,92 @@ export const Menu = styled(SemanticMenu)`
   }
 `;
 
+export const GridLayout = styled.div`
+  display: grid;
+  grid-template-columns: 220px 1fr 180px;
+  gap: 20px;
+  padding: 30px;
+  background-color: #fff;
+  min-height: 80vh;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 180px 1fr 140px;
+    padding: 20px;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    padding: 15px;
+  }
+`;
+
+export const Sidebar = styled.div`
+  background: #f4f4f4;
+  border-radius: 8px;
+  padding: 20px;
+  font-family: "Segoe UI", sans-serif;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+    margin-bottom: 20px;
+  }
+`;
+
+export const MainContent = styled.div`
+  font-family: "Segoe UI", sans-serif;
+
+  @media (max-width: 768px) {
+    margin: 0 10px;
+  }
+`;
+
+export const RightFilter = styled.div`
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  padding: 16px;
+  font-family: "Segoe UI", sans-serif;
+  user-select: none;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+    margin-top: 20px;
+  }
+`;
+
+export const AnoButton = styled.button`
+  background-color: ${(props) => (props.ativo ? "#0077B6" : "#fff")};
+  color: ${(props) => (props.ativo ? "#fff" : "#333")};
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin: 5px 5px 5px 0;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #0096c7;
+    color: #fff;
+  }
+`;
+
+export const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  gap: 10px;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 8px;
+
+    button {
+      width: 100%;
+    }
+  }
+`;
+
 export const CardGroup = styled(SemanticCard.Group)`
   &&& {
     margin-top: 1.5em;

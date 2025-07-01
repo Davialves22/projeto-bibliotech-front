@@ -6,67 +6,74 @@ const highlight = keyframes`
   100% { background-color: var(--color-500); }
 `;
 
+// Container da lista vertical de radios
 export const Menu = styled.div`
   display: flex;
-  justify-content: center;
-  overflow-x: auto;
-  white-space: nowrap;
-  padding: 0.5em 2em;
+  flex-direction: column;
+  gap: 8px;
+  padding: 1em;
   background-color: var(--color-100);
   border-radius: 8px;
   box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-500) transparent;
+  font-family: "Segoe UI", sans-serif;
 
-  &::-webkit-scrollbar {
-    height: 6px;
+  /* Largura adaptativa: no desktop larga, no tablet e menor mais estreito */
+  width: 220px;
+  max-width: 100%;
+
+  @media (max-width: 1024px) {
+    width: 180px;
   }
-  &::-webkit-scrollbar-thumb {
-    background: var(--color-500);
-    border-radius: 3px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
+
+  @media (max-width: 768px) {
+    /* Esconde o menu vertical em telas <= 768px, aparece SelectMobile */
+    display: none;
   }
 `;
 
-// Aqui o filtro impede que a prop 'active' seja repassada para o div DOM e cause warning
-export const Item = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== "active"
-})`
-  flex: 0 0 auto;
-  margin: 0 0.4em;
-  padding: 0.5em 1em;
-  font-size: 0.95em;
-  text-transform: capitalize;
-  color: ${(props) => (props.active ? "white" : "#4a4a4a")};
-  cursor: pointer;
-  border-radius: 20px;
-  user-select: none;
-  min-width: 90px;
+export const RadioItem = styled.label`
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 10px 12px;
+  font-weight: 600;
+  color: ${(props) => (props.active ? "white" : "#333")};
+  background-color: ${(props) => (props.active ? "var(--color-500)" : "transparent")};
+  border-radius: 8px;
+  user-select: none;
   transition: all 0.3s ease;
-  background-color: ${(props) =>
-    props.active ? "var(--color-500)" : "transparent"};
-  box-shadow: ${(props) =>
-    props.active ? "0 0 12px var(--color-500)" : "none"};
+
+  input[type="radio"] {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background-color: var(--color-400);
+    color: white;
+  }
 
   ${(props) =>
     props.active &&
     css`
       animation: ${highlight} 2s ease-in-out infinite;
+      box-shadow: 0 0 12px var(--color-500);
     `}
 
-  &:hover {
-    color: white;
-    background-color: var(--color-500);
-    box-shadow: 0 4px 8px rgb(0 180 216 / 0.5);
-    transform: translateY(-3px);
+  @media (max-width: 1024px) {
+    font-size: 0.95rem;
+    padding: 8px 10px;
+
+    input[type="radio"] {
+      width: 16px;
+      height: 16px;
+    }
   }
 `;
 
+// Select para mobile/tablet, aparece só em telas <= 768px
 export const SelectMobile = styled.select`
   width: 100%;
   max-width: 90%;
@@ -77,7 +84,7 @@ export const SelectMobile = styled.select`
   border: 1px solid var(--color-500);
   background-color: var(--color-100);
   color: #333;
-  display: block;
+  display: none;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 
   &:focus {
@@ -86,7 +93,7 @@ export const SelectMobile = styled.select`
     box-shadow: 0 0 4px var(--color-500);
   }
 
-  @media (min-width: 769px) {
-    display: none;
+  @media (max-width: 768px) {
+    display: block;
   }
 `;

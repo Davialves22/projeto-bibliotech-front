@@ -1,38 +1,37 @@
 import { useEffect, useState } from "react";
-import { Button, Icon } from "semantic-ui-react"; // Importa Button para os botões
-import { Container, Title } from "./Home.styles";
+import { Button, Icon } from "semantic-ui-react";
 
+import Footer from "../../components/Footer";
 import GeneroMenu from "../../components/GeneroMenu/GeneroMenu";
 import LivroList from "../../components/LivroList";
 import LoaderFallback from "../../components/LoaderFallback";
 import MenuSistema from "../../components/MenuSistema/MenuSistema";
+
 import { livrosDefault } from "../../uitls/livrosDefault";
 import { verificarPdfRemoto } from "../../uitls/verificarPdfRemoto";
 
-import Footer from "../../components/Footer";
+import {
+  AnoButton,
+  GridLayout,
+  MainContent,
+  PaginationContainer,
+  RightFilter,
+  Sidebar,
+} from "./Home.styles";
 
-const generosDefaultFallback = [
-  "FICCAO",
-  "ROMANCE",
-  "DRAMA",
-  "COMEDIA",
-  "FANTASIA",
-  "TERROR",
-  "DOCUMENTARIO",
-  "BIOGRAFIA",
-];
-
-const ITENS_POR_PAGINA = 10; // quantos livros por página
+const ITENS_POR_PAGINA = 10;
 
 export default function Home() {
   const [filtro, setFiltro] = useState("TODOS");
-  const [generosEnum, setGenerosEnum] = useState(generosDefaultFallback);
+  const [filtroAno, setFiltroAno] = useState("TODOS");
+
+  const [generosEnum, setGenerosEnum] = useState([]);
+  const [anosDisponiveis, setAnosDisponiveis] = useState(["TODOS"]);
   const [livros, setLivros] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Estado para paginação
   const [paginaAtual, setPaginaAtual] = useState(1);
 
+  // Buscar gêneros da API ou fallback
   useEffect(() => {
     const fetchGeneros = async () => {
       try {
@@ -42,130 +41,157 @@ export default function Home() {
           setGenerosEnum(data);
         }
       } catch {
-        console.warn("Usando gêneros padrão (fallback).");
+        setGenerosEnum([
+          "FICCAO",
+          "ROMANCE",
+          "DRAMA",
+          "COMEDIA",
+          "FANTASIA",
+          "TERROR",
+          "DOCUMENTARIO",
+          "BIOGRAFIA",
+        ]);
       }
     };
-
     fetchGeneros();
   }, []);
 
+  // Buscar livros e extrair anos disponíveis
   useEffect(() => {
     const fetchLivros = async () => {
       try {
         const response = await fetch("http://localhost:8080/api/livro/v1");
-        const data = (await response.ok)
-          ? await response.json()
-          : livrosDefault;
+        const data = response.ok ? await response.json() : livrosDefault;
         const livrosComPdf = await verificarPdfRemoto(
           data.length ? data : livrosDefault
         );
         setLivros(livrosComPdf);
+
+        const anos = [
+          ...new Set(
+            livrosComPdf.map((l) => new Date(l.dataPublicacao).getFullYear())
+          ),
+        ].sort((a, b) => b - a);
+        setAnosDisponiveis(["TODOS", ...anos]);
       } catch {
         const livrosComPdf = await verificarPdfRemoto(livrosDefault);
         setLivros(livrosComPdf);
+
+        const anos = [
+          ...new Set(livrosDefault.map((l) => new Date(l.dataPublicacao).getFullYear())),
+        ].sort((a, b) => b - a);
+        setAnosDisponiveis(["TODOS", ...anos]);
       } finally {
         setLoading(false);
       }
     };
-
     fetchLivros();
   }, []);
 
-  // Quando mudar o filtro, volta para a página 1
+  // Resetar página ao mudar filtro
   useEffect(() => {
     setPaginaAtual(1);
-  }, [filtro]);
+  }, [filtro, filtroAno]);
 
-  // Livros filtrados pelo gênero
-  const livrosFiltrados =
-    filtro === "TODOS"
-      ? livros
-      : livros.filter(
-          (livro) => livro.genero?.toUpperCase() === filtro.toUpperCase()
-        );
+  // Filtrar livros por gênero e ano
+  const livrosFiltrados = livros.filter((livro) => {
+    const generoOk =
+      filtro === "TODOS" || livro.genero?.toUpperCase() === filtro.toUpperCase();
+    const anoLivro = new Date(livro.dataPublicacao).getFullYear();
+    const anoOk = filtroAno === "TODOS" || anoLivro === parseInt(filtroAno);
+    return generoOk && anoOk;
+  });
 
-  // Calcular total de páginas
+  // Paginação
   const totalPaginas = Math.ceil(livrosFiltrados.length / ITENS_POR_PAGINA);
 
-  // Livros para mostrar na página atual (slice do array)
   const livrosPaginaAtual = livrosFiltrados.slice(
     (paginaAtual - 1) * ITENS_POR_PAGINA,
     paginaAtual * ITENS_POR_PAGINA
   );
 
-  // Funções para navegação
-  const irParaPaginaAnterior = () => {
-    setPaginaAtual((p) => Math.max(p - 1, 1));
-  };
-
-  const irParaPaginaProxima = () => {
-    setPaginaAtual((p) => Math.min(p + 1, totalPaginas));
-  };
-
   return (
     <>
       <MenuSistema tela="home" />
-      <Container>
-        <Title>
-          Livros <Icon name="angle double right" size="small" />
-        </Title>
-        <GeneroMenu
-          filtro={filtro}
-          generos={generosEnum}
-          onChange={setFiltro}
-        />
-        {loading ? (
-          <LoaderFallback mensagem="Carregando livros..." />
-        ) : (
-          <>
-            <p
-              style={{
-                marginTop: 20,
-                fontSize: "20px",
-                fontWeight: "600",
-                color: "#444",
-                marginBottom: "15px",
-                fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <Icon name="book" />
-              Mostrando {livrosFiltrados.length}{" "}
-              {livrosFiltrados.length === 1 ? "livro" : "livros"}
-            </p>
-            <LivroList livros={livrosPaginaAtual} filtro={filtro} />
 
-            {/* Controles de paginação */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                marginTop: 90,
-                gap: 10,
-              }}
-            >
-              <Button
-                onClick={irParaPaginaAnterior}
-                disabled={paginaAtual === 1}
-                icon="angle left"
-                content="Anterior"
-              />
-              <div style={{ alignSelf: "center" }}>
-                Página {paginaAtual} de {totalPaginas}
-              </div>
-              <Button
-                onClick={irParaPaginaProxima}
-                disabled={paginaAtual === totalPaginas || totalPaginas === 0}
-                icon="angle right"
-                labelPosition="right"
-                content="Próxima"
-              />
-            </div>
-          </>
-        )}
-      </Container>
+      <GridLayout>
+        <Sidebar>
+          <h3 style={{ marginBottom: 16, fontWeight: 700, color: "#0077B6" }}>
+            GÊNEROS
+          </h3>
+          <GeneroMenu filtro={filtro} generos={generosEnum} onChange={setFiltro} />
+        </Sidebar>
+
+        <MainContent>
+          {loading ? (
+            <LoaderFallback mensagem="Carregando livros..." />
+          ) : (
+            <>
+              <h2
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  color: "#023E8A",
+                }}
+              >
+                <Icon name="book" />
+                Últimos Livros
+              </h2>
+
+              <p
+                style={{
+                  marginBottom: 20,
+                  fontWeight: "500",
+                  fontSize: 16,
+                }}
+              >
+                Mostrando {livrosFiltrados.length}{" "}
+                {livrosFiltrados.length === 1 ? "livro" : "livros"}
+              </p>
+
+              <LivroList livros={livrosPaginaAtual} filtro={filtro} />
+
+              <PaginationContainer>
+                <Button
+                  onClick={() => setPaginaAtual((p) => Math.max(p - 1, 1))}
+                  disabled={paginaAtual === 1}
+                  icon="angle left"
+                  content="Anterior"
+                />
+                <div style={{ alignSelf: "center", fontWeight: 600 }}>
+                  Página {paginaAtual} de {totalPaginas || 1}
+                </div>
+                <Button
+                  onClick={() => setPaginaAtual((p) => Math.min(p + 1, totalPaginas))}
+                  disabled={paginaAtual === totalPaginas || totalPaginas === 0}
+                  icon="angle right"
+                  labelPosition="right"
+                  content="Próxima"
+                />
+              </PaginationContainer>
+            </>
+          )}
+        </MainContent>
+
+        <RightFilter>
+          <h4 style={{ marginBottom: 10, fontWeight: 700, color: "#0077B6" }}>
+            ANO DE LANÇAMENTO
+          </h4>
+          <div style={{ display: "flex", flexWrap: "wrap" }}>
+            {anosDisponiveis.map((ano) => (
+              <AnoButton
+                key={ano}
+                onClick={() => setFiltroAno(ano)}
+                ativo={ano === filtroAno}
+              >
+                {ano}
+              </AnoButton>
+            ))}
+          </div>
+        </RightFilter>
+      </GridLayout>
+
       <Footer />
     </>
   );
