@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   Form,
@@ -10,6 +11,8 @@ import {
 import Logo from "../../assets/Logo_sem_fundo.png";
 
 export default function Login() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -23,11 +26,33 @@ export default function Login() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleSubmit = () => {
-    alert(`Email: ${email}\nSenha: ${password}`);
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Evita recarregar a página
+
+    try {
+      const response = await fetch("http://localhost:8080/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, senha: password }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        alert("Falha no login: " + errorText);
+        return;
+      }
+
+      const data = await response.json();
+      localStorage.setItem("token", data.token);
+
+      alert("Login realizado com sucesso!");
+      navigate("/"); // Redireciona para a tela home
+    } catch (error) {
+      alert("Erro ao conectar com o servidor");
+      console.error(error);
+    }
   };
 
-  // Ajustes responsivos para container e logo
   const isMobile = windowWidth <= 480;
 
   return (
@@ -76,7 +101,8 @@ export default function Login() {
               fontSize: isMobile ? "1.5rem" : "2rem",
             }}
           >
-            <i className="book icon" style={{ color: "#2980B9" }} /> Entrar na sua conta
+            <i className="book icon" style={{ color: "#2980B9" }} /> Entrar na
+            sua conta
           </Header>
           <Segment
             stacked
@@ -141,8 +167,12 @@ export default function Login() {
                   transition: "background-color 0.3s ease",
                   fontSize: isMobile ? "1rem" : "1.1rem",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#1F618D")}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#2980B9")}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor = "#1F618D")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = "#2980B9")
+                }
               >
                 Entrar
               </Button>
@@ -157,7 +187,10 @@ export default function Login() {
             }}
           >
             Novo por aqui?{" "}
-            <a href="/form-usuario" style={{ color: "#2980B9", fontWeight: "700" }}>
+            <a
+              href="/form-usuario"
+              style={{ color: "#2980B9", fontWeight: "700" }}
+            >
               Crie uma conta
             </a>
           </Message>
