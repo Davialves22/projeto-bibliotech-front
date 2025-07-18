@@ -31,8 +31,17 @@ export default function MenuSistema(props) {
   const handleBusca = (e) => {
     if (e.key === "Enter") {
       navigate(`/list-livro?busca=${encodeURIComponent(busca)}`);
-      setMenuAberto(false); // fecha o menu mobile após busca
+      setMenuAberto(false);
     }
+  };
+
+  // 🔐 Verifica se o usuário está logado
+  const isLoggedIn = !!localStorage.getItem("token");
+
+  // 🔓 Faz logout removendo o token e redireciona para o login
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   return (
@@ -75,7 +84,8 @@ export default function MenuSistema(props) {
                 to="/form-usuario"
                 text="Cadastro"
                 active={
-                  props.tela === "usuario" && location.pathname.includes("form")
+                  props.tela === "usuario" &&
+                  location.pathname.includes("form")
                 }
               />
               <Dropdown.Item
@@ -83,7 +93,8 @@ export default function MenuSistema(props) {
                 to="/list-usuario"
                 text="Ver Todos"
                 active={
-                  props.tela === "usuario" && location.pathname.includes("list")
+                  props.tela === "usuario" &&
+                  location.pathname.includes("list")
                 }
               />
             </Dropdown.Menu>
@@ -241,36 +252,64 @@ export default function MenuSistema(props) {
           ></div>
         )}
 
-        {/* Logo fixo */}
+        {/* Logo fixo e botão login/logout */}
         <Menu.Menu position="right" className="logo-fixo">
-          <Menu.Item>
-            <Button
-              as={Link}
-              to="/login"
-              onClick={() => setMenuAberto(false)}
-              primary
-              content="Login"
-              style={{
-                minWidth: "110px",
-                borderRadius: "25px",
-                fontWeight: "700",
-                boxShadow: "0 4px 15px rgba(41, 128, 185, 0.4)",
-                transition: "all 0.3s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#1B4F72";
-                e.currentTarget.style.boxShadow =
-                  "0 6px 20px rgba(27, 79, 114, 0.7)";
-                e.currentTarget.style.transform = "scale(1.05)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "";
-                e.currentTarget.style.boxShadow =
-                  "0 4px 15px rgba(41, 128, 185, 0.4)";
-                e.currentTarget.style.transform = "scale(1)";
-              }}
-            />
-          </Menu.Item>
+          {isLoggedIn ? (
+            <Menu.Item>
+              <Button
+                onClick={handleLogout}
+                color="red"
+                content="Logout"
+                style={{
+                  minWidth: "90px",
+                  borderRadius: "25px",
+                  fontWeight: "700",
+                  boxShadow: "0 4px 15px rgba(192, 57, 43, 0.4)",
+                  transition: "all 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#922B21";
+                  e.currentTarget.style.boxShadow =
+                    "0 6px 20px rgba(146, 43, 33, 0.7)";
+                  e.currentTarget.style.transform = "scale(1.05)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "";
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 15px rgba(192, 57, 43, 0.4)";
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+              />
+            </Menu.Item>
+          ) : (
+            <Menu.Item>
+              <Button
+                as={Link}
+                to="/login"
+                primary
+                content="Login"
+                style={{
+                  minWidth: "110px",
+                  borderRadius: "25px",
+                  fontWeight: "700",
+                  boxShadow: "0 4px 15px rgba(41, 128, 185, 0.4)",
+                  transition: "all 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#1B4F72";
+                  e.currentTarget.style.boxShadow =
+                    "0 6px 20px rgba(27, 79, 114, 0.7)";
+                  e.currentTarget.style.transform = "scale(1.05)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "";
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 15px rgba(41, 128, 185, 0.4)";
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+              />
+            </Menu.Item>
+          )}
 
           <Menu.Item>
             <img src={Logo} alt="Logo" style={{ height: "40px" }} />
