@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   Button,
   Form,
@@ -8,6 +10,7 @@ import {
   Message,
   Segment,
 } from "semantic-ui-react";
+
 import Logo from "../../assets/Logo_sem_fundo.png";
 
 export default function Login() {
@@ -17,7 +20,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  // Atualiza o width da janela para responsividade
   useEffect(() => {
     function handleResize() {
       setWindowWidth(window.innerWidth);
@@ -27,7 +29,7 @@ export default function Login() {
   }, []);
 
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Evita recarregar a página
+    event.preventDefault();
 
     try {
       const response = await fetch("http://localhost:8080/login", {
@@ -38,17 +40,19 @@ export default function Login() {
 
       if (!response.ok) {
         const errorText = await response.text();
-        alert("Falha no login: " + errorText);
+        toast.error(`Falha no login: ${errorText}`);
         return;
       }
 
       const data = await response.json();
       localStorage.setItem("token", data.token);
 
-      alert("Login realizado com sucesso!");
-      navigate("/"); // Redireciona para a tela home
+      toast.success("Login realizado com sucesso!");
+      
+      // Aguarda um tempo para o usuário ver o toast antes de redirecionar
+      setTimeout(() => navigate("/"), 1500);
     } catch (error) {
-      alert("Erro ao conectar com o servidor");
+      toast.error("Erro ao conectar com o servidor.");
       console.error(error);
     }
   };
@@ -68,6 +72,8 @@ export default function Login() {
         flexDirection: "column",
       }}
     >
+      <ToastContainer position="top-center" autoClose={2000} />
+
       <img
         src={Logo}
         alt="Logo da Biblioteca"

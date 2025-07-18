@@ -61,7 +61,7 @@ export default function MenuSistema(props) {
               <Dropdown.Item
                 as={Link}
                 to="/form-livro"
-                text="Cadastro"
+                text="Cadastrar"
                 active={
                   props.tela === "livro" && location.pathname.includes("form")
                 }
@@ -259,9 +259,9 @@ export default function MenuSistema(props) {
               <Button
                 onClick={handleLogout}
                 color="red"
-                content="Logout"
+                content="Sair"
                 style={{
-                  minWidth: "90px",
+                  minWidth: "50px",
                   borderRadius: "25px",
                   fontWeight: "700",
                   boxShadow: "0 4px 15px rgba(192, 57, 43, 0.4)",
