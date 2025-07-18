@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Icon } from "semantic-ui-react";
 
 import Footer from "../../components/Footer";
@@ -65,10 +65,14 @@ export default function Home() {
     const fetchLivros = async () => {
       try {
         const response = await fetch("http://localhost:8080/api/livro/v1");
-        const data = response.ok ? await response.json() : livrosDefault;
-        const livrosComPdf = await verificarPdfRemoto(
-          data.length ? data : livrosDefault
-        );
+        let data;
+        if (response.ok) {
+          data = await response.json();
+        } else {
+          data = livrosDefault;
+        }
+
+        const livrosComPdf = await verificarPdfRemoto(data);
         setLivros(livrosComPdf);
 
         const anos = [
@@ -77,20 +81,28 @@ export default function Home() {
           ),
         ].sort((a, b) => b - a);
         setAnosDisponiveis(["TODOS", ...anos]);
-      } catch {
-        const livrosComPdf = await verificarPdfRemoto(livrosDefault);
-        setLivros(livrosComPdf);
+      } catch (error) {
+        console.error("Erro ao buscar livros:", error);
+        try {
+          const livrosComPdf = await verificarPdfRemoto(livrosDefault);
+          setLivros(livrosComPdf);
 
-        const anos = [
-          ...new Set(
-            livrosDefault.map((l) => new Date(l.dataPublicacao).getFullYear())
-          ),
-        ].sort((a, b) => b - a);
-        setAnosDisponiveis(["TODOS", ...anos]);
+          const anos = [
+            ...new Set(
+              livrosDefault.map((l) => new Date(l.dataPublicacao).getFullYear())
+            ),
+          ].sort((a, b) => b - a);
+          setAnosDisponiveis(["TODOS", ...anos]);
+        } catch (e) {
+          console.error("Erro ao processar livros default:", e);
+          setLivros([]);
+          setAnosDisponiveis(["TODOS"]);
+        }
       } finally {
         setLoading(false);
       }
     };
+
     fetchLivros();
   }, []);
 
