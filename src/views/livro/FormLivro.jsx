@@ -84,9 +84,13 @@ export default function FormLivro() {
       console.log(`→ ${pair[0]}:`, pair[1]);
     }
 
+    // Pega o token JWT do localStorage (ajuste se você armazenar em outro lugar)
+    const token = localStorage.getItem("token");
+
     const config = {
       headers: {
         "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,  // <<<<<< Token no header!
       },
     };
 
@@ -103,16 +107,12 @@ export default function FormLivro() {
     request
       .then((response) => {
         console.log("✅ Livro salvo com sucesso!", response.data);
-
-        // Exibe o toast
         toast.success("Livro salvo com sucesso!");
 
-        // Aguarda 3 segundos antes de navegar
         setTimeout(() => {
           navigate("/");
         }, 3000);
       })
-
       .catch((error) => {
         console.error("❌ Erro ao salvar o Livro:", error);
 
@@ -273,7 +273,7 @@ export default function FormLivro() {
         </Container>
       </div>
 
-      <ToastContainer position="top-right" autoClose={3000} Link={"/home"} />
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 }
